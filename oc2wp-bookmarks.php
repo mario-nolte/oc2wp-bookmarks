@@ -3,7 +3,7 @@
 Plugin Name: OC2WP Bookmarks
 Version: 0.0.5
 Plugin URI: http://momind.eu/
-Description: Use bookmarks that are managed by ownCloud in WordPress posts, pages and widgets
+Description: Use bookmarks that are managed by ownCloud in WordPress posts and pages as table
 Author: Mario Nolte
 Author URI: http://www.momind.eu
 Licenc:  GPLv2
@@ -12,42 +12,41 @@ Licenc:  GPLv2
 /*import the class file for Bookmark Class*/
 require_once( plugin_dir_path( __FILE__ ) . 'bookmark.inc.php' );
 
-  /* get bookmarks in accordance to the defined tag out of the database and return an array of bookmarks*/
-  function getBMfromSQL($tag){
-    /*configure SQL Server connection data*/
-    $sql_server=get_option('oc2wpbm_sql_server');
-    $sql_user =$sqlserver=get_option('oc2wpbm_sql_user');;
-    $sql_password =$sqlserver=get_option('oc2wpbm_sql_password');;
-    $oc_database=$sqlserver=get_option('oc2wpbm_sql_database');;
+/* get bookmarks in accordance to the defined tag and the specified user (as owner of the bookmarks) out of the database and return an array of bookmarks*/
+function getBMfromSQL($tag){
+  /*configure SQL Server connection data*/
+  $sql_server=get_option('oc2wpbm_sql_server');
+  $sql_user =$sqlserver=get_option('oc2wpbm_sql_user');;
+  $sql_password =$sqlserver=get_option('oc2wpbm_sql_password');;
+  $oc_database=$sqlserver=get_option('oc2wpbm_sql_database');;
 
-    $bm_term="%". $tag."%";
-    /* Filter bookmarks of a certain user or display all bookmarks of the database*/
-    if (get_option('oc2wpbm_sql_bmOwner')=='all'){
-    $bm_user='%';}
-    else {$bm_user=get_option('oc2wpbm_sql_bmOwner');};
+  $bm_term="%". $tag."%";
+  /* Filter bookmarks of a certain user or display all bookmarks of the database*/
+  if (get_option('oc2wpbm_sql_bmOwner')=='all'){
+      $bm_user='%';}
+  else {$bm_user=get_option('oc2wpbm_sql_bmOwner');};
 
-    /* connect to MySQL*/
-    /* Instead of using the PHP SQL connection (following comment) the WordPress WPDB connection is used to sanitise the query.
-    /*	mysql_connect($sql_server, $sql_user, $sql_password);
-	mysql_query("SET NAMES 'utf8'");
-	mysql_select_db($oc_database);*/
-    
-    $OCdb = new wpdb($sql_user, $sql_password, $oc_database, $sql_server); 
-    /* Sanitise the query to avoid code & SQL injection*/
-    $query=$OCdb->prepare("select b.url, b.title, b.description from oc_bookmarks b INNER JOIN oc_bookmarks_tags t on t.bookmark_id=b.id WHERE t.tag LIKE %s AND b.user_id LIKE %s ORDER BY b.lastmodified DESC", $bm_term, $bm_user);
-    
-    echo $query;
-    
-    $res = $OCdb->get_results($query);
-        
-    /*create array containing BM objects*/
-    for ($i=0; $i<count($res); $i++){
-	  $bookmarks[$i]=new bookmark($res[$i] ->title, $res[$i] ->url, $res[$i] ->description );
-	}
-    
-      return $bookmarks;
-  }
+  /* connect to MySQL*/
+  /* Instead of using the PHP SQL connection (following comment) the WordPress WPDB connection is used to sanitise the query.
+  /*	mysql_connect($sql_server, $sql_user, $sql_password);
+      mysql_query("SET NAMES 'utf8'");
+      mysql_select_db($oc_database);*/
+  
+  $OCdb = new wpdb($sql_user, $sql_password, $oc_database, $sql_server); 
+  /* Sanitise the query to avoid code & SQL injection*/
+  $query=$OCdb->prepare("select b.url, b.title, b.description from oc_bookmarks b INNER JOIN oc_bookmarks_tags t on t.bookmark_id=b.id WHERE t.tag LIKE %s AND b.user_id LIKE %s ORDER BY b.lastmodified DESC", $bm_term, $bm_user);
+  
+  $res = $OCdb->get_results($query);
+      
+  /*create array containing BM objects*/
+  for ($i=0; $i<count($res); $i++){
+	$bookmarks[$i]=new bookmark($res[$i] ->title, $res[$i] ->url, $res[$i] ->description );
+      }
+  
+    return $bookmarks;
+}
 
+/* get bookmarks in accordance to the defined tag out of ownCloud via the Bookmarks App*/
 function getBMfromOC($tag){
 echo "DAS TAG IST:" . $tag ;
 $response = wp_remote_post( get_option('oc2wpbm_oc_server'), array(
@@ -70,7 +69,7 @@ $bookmarks[$i]=new bookmark($result[$i] ->title, $result[$i] ->url, $result[$i] 
 return $bookmarks;
 }
 
-
+/* Generates the HTML Code for a table containing bookmark information*/
 function oc2wpbm_tablegenerator($bookmarks){
 
 $tablepre=stripslashes(get_option('oc2wpbm_table_styling'));
@@ -100,6 +99,7 @@ $tableoutput .= $tablescript;
 return $tableoutput;
 }
 
+/* Coordinates the mehod call related to the operation mode and returns the HTML code which replaces the shortcode in pages and posts*/
 function oc2wpbm_shortcode($atts) {
   $output ="<p>Output mode: ";
   
@@ -107,23 +107,24 @@ function oc2wpbm_shortcode($atts) {
   $bmArray;
   
   if(get_option('oc2wpbm_op_type')=='sql'){
-  $output = $output . "<font color='green'> SQL mode </p> </font>" . get_option('oc2wpbm_sql_bmOwner');
-  $bookmarks = getBMfromSQL("{$tagArray['tag']}");
-  $output = $output . oc2wpbm_tablegenerator($bookmarks);
+    $output = $output . "<font color='green'> SQL mode </p> </font>" . get_option('oc2wpbm_sql_bmOwner');
+    $bookmarks = getBMfromSQL("{$tagArray['tag']}");
+    $output = $output . oc2wpbm_tablegenerator($bookmarks);
   return $output;
   }
   
   if(get_option('oc2wpbm_op_type')=='ocApp'){
-  $output = $output . "<font color='green'> OC mode </p> </font>";
-  $bookmarks = getBMfromOC("{$tagArray['tag']}");
-  $output = $output . oc2wpbm_tablegenerator($bookmarks);
+    $output = $output . "<font color='green'> OC mode </p> </font>";
+    $bookmarks = getBMfromOC("{$tagArray['tag']}");
+    $output = $output . oc2wpbm_tablegenerator($bookmarks);
   return $output;
   }
-
 }
 
+/* Hooks shortcode oc2wpbm into WordPress*/
 add_shortcode('oc2wpbm', 'oc2wpbm_shortcode');
 
+/* Execute imported configuration page out of config-template.inc.php*/
 function oc2wpbm_configuration_page()
 {
 
@@ -341,6 +342,7 @@ function oc2wpbm_configuration_page()
 <?php	
 }
 
+/* hook configuration page into the setting area of the wordpress backend*/
 function oc2wpbm_plugin_menu()
 {
 add_options_page('owncCloud 2 WordPress Bookmarks', 'OC2WP Bookmarks', 'manage_options', __FILE__, 'oc2wpbm_configuration_page');

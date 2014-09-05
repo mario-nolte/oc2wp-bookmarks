@@ -2,8 +2,8 @@
 Contributors: Mario Nolte
 Donate link: https://www.momind.eu/
 Tags: owncloud, Bookmarks
-Requires at least: 3.7.1
-Tested up to: 3.8.1
+Requires at least: 3.9.2
+Tested up to: 4.0.0
 Stable tag: 1.2.8
 
 Hallo Welt als Wordpress Plugin. Shortcode für Artikel und Seite [hw] - Sidebarwidget - Dashboard Menü und Seite
