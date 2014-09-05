@@ -3,7 +3,7 @@
 Plugin Name: WP2OC Bookmarks
 Version: 0.0.5
 Plugin URI: http://momind.eu/
-Description: Use bookmarks that are managed by owncloud in WordPress posts, pages and widgets
+Description: Use bookmarks that are managed by ownCloud in WordPress posts, pages and widgets
 Author: Mario Nolte
 Author URI: http://www.momind.eu
 Licenc:  GPLv2
@@ -21,13 +21,17 @@ require_once( plugin_dir_path( __FILE__ ) . 'bookmark.inc.php' );
     $oc_database=$sqlserver=get_option('wpocbm_sql_database');;
 
     $bm_term=$tag;
+    /* Filter bookmarks of a certain user or display all bookmarks of the database*/
+    if (get_option('wpocbm_sql_bmOwner')=='all'){
+    $bm_user='%';}
+    else {$bm_user=get_option('wpocbm_sql_bmOwner');};
 
     /*connect to MySQL*/
     mysql_connect($sql_server, $sql_user, $sql_password);
     mysql_query("SET NAMES 'utf8'");
     mysql_select_db($oc_database);
     /*query*/
-    $res = mysql_query("select b.url, b.title, b.description from oc_bookmarks b INNER JOIN oc_bookmarks_tags t on t.bookmark_id=b.id WHERE t.tag LIKE '%$bm_term%' ORDER BY b.lastmodified DESC;");
+    $res = mysql_query("select b.url, b.title, b.description from oc_bookmarks b INNER JOIN oc_bookmarks_tags t on t.bookmark_id=b.id WHERE t.tag LIKE '%$bm_term%' AND b.user_id LIKE '$bm_user' ORDER BY b.lastmodified DESC;");
     $num = mysql_num_rows($res);
     
     
@@ -80,7 +84,7 @@ $tableoutput .= "<tbody>";
 	  
   for ($i=0; $i<count($bookmarks); $i++){
   $tableoutput .= "<tr>";
-  $tableoutput .= "<td class='column-1'> $i </td>";
+  $tableoutput .= "<td class='column-1'>" . ($i+1) . "</td>";
   $tableoutput .= "<td class='column-2'> <a href ='" . $bookmarks[$i]->link . "' target='_blank'> ".$bookmarks[$i]->title . "</a> </td>";
   $tableoutput .= "<td class='column-3'>" . $bookmarks[$i]->description . " </td>";
   $tableoutput .= "</tr>";
@@ -100,14 +104,14 @@ function wp_oc_bm_shortcode($atts) {
   $bmArray;
   
   if(get_option('wpocbm_op_type')=='sql'){
-  $output = $output . "<font color='green'> SQL mode </p>";
+  $output = $output . "<font color='green'> SQL mode </p> </font>" . get_option('wpocbm_sql_bmOwner');
   $bookmarks = getBMfromSQL("{$tagArray['tag']}");
   $output = $output . wp_oc_bm_tablegenerator($bookmarks);
   return $output;
   }
   
   if(get_option('wpocbm_op_type')=='ocApp'){
-  $output = $output . "<font color='green'> OC mode </p>";
+  $output = $output . "<font color='green'> OC mode </p> </font>";
   $bookmarks = getBMfromOC("{$tagArray['tag']}");
   $output = $output . wp_oc_bm_tablegenerator($bookmarks);
   return $output;
@@ -132,6 +136,7 @@ function wpocbm_configuration_page()
         update_option('wpocbm_sql_user', (string)$_POST["wpocbm_sql_user"]);
         update_option('wpocbm_sql_password', (string)$_POST["wpocbm_sql_password"]);
         update_option('wpocbm_sql_database', (string)$_POST["wpocbm_sql_database"]);
+        update_option('wpocbm_sql_bmOwner', (string)$_POST["wpocbm_sql_bmOwner"]);
         update_option('wpocbm_table_styling', $_POST["wpocbm_table_styling"]);
         update_option('wpocbm_table_number', $_POST["wpocbm_table_number"]);
         update_option('wpocbm_table_title', $_POST["wpocbm_table_title"]);
@@ -289,6 +294,16 @@ echo "</font>";
     </td>
 </tr>
 
+<tr valign="top">
+    <td width="25%" align="right">
+      Bookmark owner:
+    </td>
+    <td align="left">
+      <input name="wpocbm_sql_bmOwner" type="text" size="25" value="<?php echo get_option('wpocbm_sql_bmOwner'); ?>"/><br>
+      <i>To display only the bookmarks of a certain owner please enter the username here. Otherwise please enter "all": Bookmarks of all users containing the specified tag will be displayed. </i>
+    </td>
+    </tr>
+
 </table>
 
 
@@ -318,7 +333,7 @@ echo "</font>";
 
     <td align="left" style="width:100px;">
       <input name="wpocbm_table_title" type="text" size="25" value="<?php echo get_option('wpocbm_table_title'); ?>"/><br>
-      <i>Titel</i>
+      <i>Title</i>
     </td>
 
     <td align="left" style="width:100px;">
