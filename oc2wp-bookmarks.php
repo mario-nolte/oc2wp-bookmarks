@@ -153,13 +153,29 @@ function oc2wpbm_configuration_page()
     
     $oc2wpbm_op_type = stripslashes(get_option('oc2wpbm_op_type'));
 									  
-
 ?>
 
 <form method="post" action="<?php echo $_SERVER["REQUEST_URI"]; ?>" id="oc2wpoptions" class="validate">
 <input type="hidden" name="info_update" id="info_update" value="true" />
+ 
+<script language="javascript" type="text/javascript">
+  function toggleDisableOC(radio) {
+    var toggle1 = document.getElementById("ocAppOptions");
+    radio.checked ? toggle1.disabled = false : toggle1.disabled = true;
+    var toggle2 = document.getElementById("sqlOptions");
+    radio.checked ? toggle2.disabled = true : toggle2.disabled = false;
+  }
+    function toggleDisableSQL(radio) {
+    var toggle1 = document.getElementById("ocAppOptions");
+    radio.checked ? toggle1.disabled = true : toggle1.disabled = false;
+    var toggle2 = document.getElementById("sqlOptions");
+    radio.checked ? toggle2.disabled = false : toggle2.disabled = true;
+  }
+</script>
+
+
 <h2>ownCloud2WordPress Bookmarks sharing options</h2>
-    
+     
     <h3>Plugin Usage:</h3>
 
     <p>To make use of this plugin please consider the following steps:</p>
@@ -169,7 +185,7 @@ function oc2wpbm_configuration_page()
     <li>Add the shortcode <strong>[oc2wpbm tag="example"]</strong> to a post or page that should contain a table with those bookmarks that have the tag 'example'.</li>
     <li>Configure the design of the table e. g. like explained in this tutorial.</li>
     </ol>
-
+  
 <fieldset>
 <legend><h3>Operation mode</h3></legend>
 <p>Please chose if you use the Owncloud APP or if Bookmarks should be retrieved by using the MySQL database of owncloud.</p>
@@ -179,7 +195,7 @@ function oc2wpbm_configuration_page()
       OC App:
     </td>
     <td align="left">
-    <?php _e('<input type="radio" name="oc2wpbm_op_type" value="ocApp"') ?>
+    <?php _e('<input type="radio" name="oc2wpbm_op_type" value="ocApp" onchange="toggleDisableOC(this);" id="opOcApp"') ?>
     <?php if ($oc2wpbm_op_type == "ocApp") echo " checked " ?>
     <?php _e('/>') ?>
   <tr valign="top">
@@ -187,7 +203,7 @@ function oc2wpbm_configuration_page()
       MySQL:
     </td>
     <td align="left">
-    <?php _e('<input type="radio" name="oc2wpbm_op_type" value="sql"') ?>
+    <?php _e('<input type="radio" name="oc2wpbm_op_type" value="sql" onchange="toggleDisableSQL(this);" id="opSQL"') ?>
     <?php if ($oc2wpbm_op_type == "sql") echo " checked "  ?>
     <?php _e('/>') ?>
 </td>
@@ -195,7 +211,10 @@ function oc2wpbm_configuration_page()
 </table>
 </fieldset>
 
-<fieldset>
+<?php _e('<fieldset id="ocAppOptions"') ?>
+<?php if ($oc2wpbm_op_type == "sql") echo " disabled" ?>
+<?php _e('/>') ?>
+
 <legend><h3>Owncloud App Options</h3></legend>
 
 <table width="100%" border="0" cellspacing="0" cellpadding="6">
@@ -224,49 +243,19 @@ function oc2wpbm_configuration_page()
       <input name="oc2wpbm_oc_password" type="password" size="25" value="<?php echo get_option('oc2wpbm_oc_password'); ?>"/>
     </td>
 </tr>
-<tr>
-<td>
-</td>
-  <td>
-  <?php
-  $response = wp_remote_post( get_option('oc2wpbm_oc_server'), array(
-	  'method' => 'POST',
-	  'timeout' => 45,
-	  'redirection' => 5,
-	  'httpversion' => '1.0',
-	  'blocking' => true,
-	  'headers' => array(),
-	  'body' => array( 'user' => get_option('oc2wpbm_oc_user'), 'password' => get_option('oc2wpbm_oc_password')),
-	  'cookies' => array()
-      )
-  );
 
-  $result = json_decode($response['body']);
-
-  /*echo $result[0] ->url;*/
-  if($result ->error==1){
-  echo "<font color='red'>";
-  echo $result ->message;
-  echo "</font>";
-  }
-  /*print_r($result);*/
-  if($result ->status=='error'){
-  echo "<font color='red'>";
-  echo "Check OC APP URL. OC Server response is: " . $result->data->message;
-  echo "</font>";
-  }
-  ?>
-  </td>
-</tr>
 </table>
 </fieldset>
 
         
-<fieldset>
-<legend><h3>SQL-Options</h3></legend>
+<?php _e('<fieldset id="sqlOptions"') ?>
+<?php if ($oc2wpbm_op_type == "ocApp") echo " disabled" ?>
+<?php _e('/>') ?>
+
+<label> <h3>SQL-Options</h3></lable>
 <p>To access the owncloud database it is highly recommended to create an own user that has limited access to the database like described in this  tutorial. Please fill the following fields to enter the access data for the database. </p>
 <table width="100%" border="0" cellspacing="0" cellpadding="6">
-    
+
 <tr valign="top">
     <td width="25%" align="right">
       SQL server:
