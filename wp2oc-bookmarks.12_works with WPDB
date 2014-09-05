@@ -20,32 +20,23 @@ require_once( plugin_dir_path( __FILE__ ) . 'bookmark.inc.php' );
     $sql_password =$sqlserver=get_option('wpocbm_sql_password');;
     $oc_database=$sqlserver=get_option('wpocbm_sql_database');;
 
-    $bm_term="%". $tag."%";
+    $bm_term=$tag;
     /* Filter bookmarks of a certain user or display all bookmarks of the database*/
     if (get_option('wpocbm_sql_bmOwner')=='all'){
     $bm_user='%';}
     else {$bm_user=get_option('wpocbm_sql_bmOwner');};
 
-    /* connect to MySQL*/
-    /* Instead of using the PHP SQL connection (following comment) the WordPress WPDB connection is used to sanitise the query.
-    /*	mysql_connect($sql_server, $sql_user, $sql_password);
-	mysql_query("SET NAMES 'utf8'");
-	mysql_select_db($oc_database);*/
+    /*connect to MySQL*/
+    /*mysql_connect($sql_server, $sql_user, $sql_password);
+    mysql_query("SET NAMES 'utf8'");
+    mysql_select_db($oc_database);*/
     
-    $OCdb = new wpdb($sql_user, $sql_password, $oc_database, $sql_server); 
-    /* Sanitise the query to avoid code & SQL injection*/
-    $query=$OCdb->prepare("select b.url, b.title, b.description from oc_bookmarks b INNER JOIN oc_bookmarks_tags t on t.bookmark_id=b.id WHERE t.tag LIKE %s AND b.user_id LIKE %s ORDER BY b.lastmodified DESC", $bm_term, $bm_user);
+    $OCdb = new wpdb($sql_user, $sql_password, $oc_database, $sql_server);
     
-    echo $query;
-    
-    $res = $OCdb->get_results($query);
-        
-    /*create array containing BM objects*/
-    for ($i=0; $i<count($res); $i++){
-	  $bookmarks[$i]=new bookmark($res[$i] ->title, $res[$i] ->url, $res[$i] ->description );
-	}
-    
-      return $bookmarks;
+    $test = $OCdb->get_results("select b.url, b.title, b.description from oc_bookmarks b");
+    print_r($test);
+  
+
   }
 
 function getBMfromOC($tag){
