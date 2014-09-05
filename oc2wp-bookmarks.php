@@ -34,7 +34,7 @@ function getBMfromSQL($tag){
   
   $OCdb = new wpdb($sql_user, $sql_password, $oc_database, $sql_server); 
   /* Sanitise the query to avoid code & SQL injection*/
-  $query=$OCdb->prepare("select b.url, b.title, b.description from oc_bookmarks b INNER JOIN oc_bookmarks_tags t on t.bookmark_id=b.id WHERE t.tag LIKE %s AND b.user_id LIKE %s ORDER BY b.lastmodified DESC", $bm_term, $bm_user);
+  $query=$OCdb->prepare("select b.url, b.title, b.description from oc_bookmarks b INNER JOIN oc_bookmarks_tags t on t.bookmark_id=b.id WHERE t.tag COLLATE UTF8_GENERAL_CI LIKE %s AND b.user_id LIKE %s ORDER BY b.lastmodified DESC", $bm_term, $bm_user);
   
   $res = $OCdb->get_results($query);
       
@@ -158,7 +158,7 @@ function oc2wpbm_configuration_page()
 
 <form method="post" action="<?php echo $_SERVER["REQUEST_URI"]; ?>" id="oc2wpoptions" class="validate">
 <input type="hidden" name="info_update" id="info_update" value="true" />
-<h2>WordPress2Owncloud Bookmarks sharing options</h2>
+<h2>ownCloud2WordPress Bookmarks sharing options</h2>
     
     <h3>Plugin Usage:</h3>
 
@@ -170,7 +170,8 @@ function oc2wpbm_configuration_page()
     <li>Configure the design of the table e. g. like explained in this tutorial.</li>
     </ol>
 
-<h3>Operation Mode</h3>
+<fieldset>
+<legend><h3>Operation mode</h3></legend>
 <p>Please chose if you use the Owncloud APP or if Bookmarks should be retrieved by using the MySQL database of owncloud.</p>
 <table width="100%" border="0" cellspacing="0" cellpadding="6">
 <tr valign="top">
@@ -192,8 +193,10 @@ function oc2wpbm_configuration_page()
 </td>
 </tr>
 </table>
+</fieldset>
 
-<h3>Owncloud App Options</h3>
+<fieldset>
+<legend><h3>Owncloud App Options</h3></legend>
 
 <table width="100%" border="0" cellspacing="0" cellpadding="6">
     
@@ -224,13 +227,43 @@ function oc2wpbm_configuration_page()
 <tr>
 <td>
 </td>
+  <td>
+  <?php
+  $response = wp_remote_post( get_option('oc2wpbm_oc_server'), array(
+	  'method' => 'POST',
+	  'timeout' => 45,
+	  'redirection' => 5,
+	  'httpversion' => '1.0',
+	  'blocking' => true,
+	  'headers' => array(),
+	  'body' => array( 'user' => get_option('oc2wpbm_oc_user'), 'password' => get_option('oc2wpbm_oc_password')),
+	  'cookies' => array()
+      )
+  );
 
+  $result = json_decode($response['body']);
+
+  /*echo $result[0] ->url;*/
+  if($result ->error==1){
+  echo "<font color='red'>";
+  echo $result ->message;
+  echo "</font>";
+  }
+  /*print_r($result);*/
+  if($result ->status=='error'){
+  echo "<font color='red'>";
+  echo "Check OC APP URL. OC Server response is: " . $result->data->message;
+  echo "</font>";
+  }
+  ?>
+  </td>
 </tr>
 </table>
-
+</fieldset>
 
         
-<h3>SQL Options</h3>
+<fieldset>
+<legend><h3>SQL-Options</h3></legend>
 <p>To access the owncloud database it is highly recommended to create an own user that has limited access to the database like described in this  tutorial. Please fill the following fields to enter the access data for the database. </p>
 <table width="100%" border="0" cellspacing="0" cellpadding="6">
     
@@ -281,9 +314,10 @@ function oc2wpbm_configuration_page()
     </tr>
 
 </table>
+</fieldset>
 
-
-<h3>Configure Table Layout</h3>
+<fieldset>
+<legend><h3>Table layout options</h3></legend>
 <table width="100%" border="0" cellspacing="0" cellpadding="6">
     
 <tr valign="top">
@@ -331,7 +365,7 @@ function oc2wpbm_configuration_page()
 </tr>
 
 </table>
-    
+</fieldset>    
   
 
   <p class="submit"><input type="submit" name="inf_update" id="submit" class="button" value="<?php _e('Update options'); ?> &raquo;"></p>
