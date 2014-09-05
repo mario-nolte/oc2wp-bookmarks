@@ -6,50 +6,45 @@ Requires at least: 3.9.2
 Tested up to: 4.0.0
 Stable tag: 1.2.8
 
-Hallo Welt als Wordpress Plugin. Shortcode für Artikel und Seite [hw] - Sidebarwidget - Dashboard Menü und Seite
+Use bookmarks that are managed by ownCloud in WordPress posts and pages as table.
 
 == Description ==
-Hallo Welt das wahrscheinlich meist verwendete Script in jeglicher Programmiersprache für die ersten Schritt mit einer Programmiersprache
-WP Hallo Welt zeigt auf einfache Weise wie Hallo Welt in Wordpress zum Einsatz kommen kann und wie man für die Ersten Schritte einige der Schnittstellen zu Wordpress nutzt.
-Für reine Anwender wird diese Plugin keine wirkliche Nutzen haben, für interessenten an der Entwicklung eigener voerst kleiner Plugins kann es aber eine kleine Hilfe sein.
+This plugin allows you to make use of your ownCloud bookmarks in WordPress posts and pages. You can:
 
-* Shortcode - [hw] in beliebigen Artikl oder Seite einschreiben
-* Sidebar Widget - Setzt dein Hallo Welt Sidebar Widget unter Dashboard - Design - Widget in deine Sidebar
-* Dashboard Menü und Dashboard Seite - im Dashboard findest du ein eigenes Hallo Welt Menü
-* Benutzer anzeigen 
+* make use of the ownCloud Bookmarks App (link).
+* access the ownCloud database after configuring it like described here.
+* Use the shortcode [ oc2wpbm] to generate tables that contain ownCloud Bookmarks that ared tagged with 'public'.
+* Use the shortcode [ oc2wpbm tag="example"] to generate tables that contain ownCloud Bookmarks that ared tagged with 'example'.
+* Configure the layout of the table.
 
-This is a Hello World expample, only in german language in this time.
-
-weiter Infos:
-http://www.wieser.at/wordpress/plugins
+find more here:
+http://www.momind.eu
 
 
 == Installation ==
 
 
-1. Installiere (lade) den Ordner `hallowelt` ind das `/wp-content/plugins/` Verzeichnis
-1. Aktiviere das Plugin über das 'Plugins' Menü in WordPress
-1. teste mit Shortcode (in Artikel oder Seite) - [hw]
-1. teste das Sidebar Widget im Menü Design - Widget
-1. teste das Dashboard Menü "Hallo Welt"
-1. schau dir den Quellcode an, wenn du eigene Plugins bauen willst.
+1. Download and copy the plugin into the folder `/wp-content/plugins/`
+1. Activate the plugin by making use of the /Plugin area in the WordPress backend.
+1. Configure the operation mode of the plugin (SQL mode or ownCloud mode)
+1. put the shortcode [ oc2wp] into the page or post that should contain a table of bookmarks
 
 == Frequently Asked Questions ==
 
-= Warum ein Hallo Welt Plugin =
+= Which operation mode is appropriate? =
 
 um einige einfach Möglichkeiten aufzuzeigen, wie Plugins eingebunden werden.
 
-= Fragen zu Plugin Programmierung =
+= How to configure the OC mode =
 
 Erfahre mehr unter  codex.wordpress.org oder in Deutschsprachigen Wordpress Community Forum wpde.org
 
-= Ideen, Anregungen
-sind willkommen, die idee das Hallo Welt noch um einige Basic funktion auszubauen, vielleicht deine Idee könnte passieren
+= What are the next steps for this plugin =
+Currently I am working to add a widget for sidebars to this plugin so that ownCloud bookmarks also can be used within the widget areas.
+Further suggestions are welcome!
 
-= language - Sprache
-diese Plugin ist derzeit nur in deutscher Sprache
-this Plugin is only german language in this time
+= language =
+This plugin is currently only available in English.
 
 
 == Screenshots ==
