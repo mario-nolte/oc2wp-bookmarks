@@ -287,7 +287,7 @@ try{
 <?php if ($oc2wpbm_op_type == "ocApp") echo " disabled" ?>
 <?php _e('/>') ?>
 
-<label> <h3>SQL-Options</h3></lable>
+<label> <h3>SQL-Options</h3></label>
 <p>To access the owncloud database it is highly recommended to create an own user that has limited access to the database like described in this  tutorial. Please fill the following fields to enter the access data for the database. </p>
 <table width="100%" border="0" cellspacing="0" cellpadding="6">
 
