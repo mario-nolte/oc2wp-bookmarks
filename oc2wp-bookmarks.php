@@ -259,11 +259,10 @@ function oc2wpbm_configuration_page()
 	  'cookies' => array()
       )
   );
-try{
+  
+  if(is_array($response)){
   $result = json_decode($response['body']);
-} catch (Exception $e) {
-    echo 'Error: ',  $e->getMessage(), "\n";
-}
+  
   /*echo $result[0] ->url;*/
   if($result ->error==1){
   echo "<font color='red'>";
@@ -276,7 +275,8 @@ try{
   echo "Check OC APP URL. OC Server response is: " . $result->data->message;
   echo "</font>";
   }
-  ?>
+  }
+?>
   </td>
 </tr>
 </table>
