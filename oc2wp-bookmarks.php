@@ -243,7 +243,42 @@ function oc2wpbm_configuration_page()
       <input name="oc2wpbm_oc_password" type="password" size="25" value="<?php echo get_option('oc2wpbm_oc_password'); ?>"/>
     </td>
 </tr>
-
+<tr>
+<td>
+</td>
+  <td>
+  <?php
+  $response = wp_remote_post( get_option('oc2wpbm_oc_server'), array(
+	  'method' => 'POST',
+	  'timeout' => 45,
+	  'redirection' => 5,
+	  'httpversion' => '1.0',
+	  'blocking' => true,
+	  'headers' => array(),
+	  'body' => array( 'user' => get_option('oc2wpbm_oc_user'), 'password' => get_option('oc2wpbm_oc_password')),
+	  'cookies' => array()
+      )
+  );
+try{
+  $result = json_decode($response['body']);
+} catch (Exception $e) {
+    echo 'Error: ',  $e->getMessage(), "\n";
+}
+  /*echo $result[0] ->url;*/
+  if($result ->error==1){
+  echo "<font color='red'>";
+  echo $result ->message;
+  echo "</font>";
+  }
+  /*print_r($result);*/
+  if($result ->status=='error'){
+  echo "<font color='red'>";
+  echo "Check OC APP URL. OC Server response is: " . $result->data->message;
+  echo "</font>";
+  }
+  ?>
+  </td>
+</tr>
 </table>
 </fieldset>
 
