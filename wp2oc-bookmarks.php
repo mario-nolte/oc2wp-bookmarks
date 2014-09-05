@@ -1,6 +1,6 @@
 <?php
 /* 
-Plugin Name: WP2OC Bookmarks
+Plugin Name: OC2WP Bookmarks
 Version: 0.0.5
 Plugin URI: http://momind.eu/
 Description: Use bookmarks that are managed by ownCloud in WordPress posts, pages and widgets
@@ -15,16 +15,16 @@ require_once( plugin_dir_path( __FILE__ ) . 'bookmark.inc.php' );
   /* get bookmarks in accordance to the defined tag out of the database and return an array of bookmarks*/
   function getBMfromSQL($tag){
     /*configure SQL Server connection data*/
-    $sql_server=get_option('wpocbm_sql_server');
-    $sql_user =$sqlserver=get_option('wpocbm_sql_user');;
-    $sql_password =$sqlserver=get_option('wpocbm_sql_password');;
-    $oc_database=$sqlserver=get_option('wpocbm_sql_database');;
+    $sql_server=get_option('oc2wpbm_sql_server');
+    $sql_user =$sqlserver=get_option('oc2wpbm_sql_user');;
+    $sql_password =$sqlserver=get_option('oc2wpbm_sql_password');;
+    $oc_database=$sqlserver=get_option('oc2wpbm_sql_database');;
 
     $bm_term="%". $tag."%";
     /* Filter bookmarks of a certain user or display all bookmarks of the database*/
-    if (get_option('wpocbm_sql_bmOwner')=='all'){
+    if (get_option('oc2wpbm_sql_bmOwner')=='all'){
     $bm_user='%';}
-    else {$bm_user=get_option('wpocbm_sql_bmOwner');};
+    else {$bm_user=get_option('oc2wpbm_sql_bmOwner');};
 
     /* connect to MySQL*/
     /* Instead of using the PHP SQL connection (following comment) the WordPress WPDB connection is used to sanitise the query.
@@ -50,14 +50,14 @@ require_once( plugin_dir_path( __FILE__ ) . 'bookmark.inc.php' );
 
 function getBMfromOC($tag){
 echo "DAS TAG IST:" . $tag ;
-$response = wp_remote_post( get_option('wpocbm_oc_server'), array(
+$response = wp_remote_post( get_option('oc2wpbm_oc_server'), array(
 	'method' => 'POST',
 	'timeout' => 45,
 	'redirection' => 5,
 	'httpversion' => '1.0',
 	'blocking' => true,
 	'headers' => array(),
-	'body' => array( 'user' => get_option('wpocbm_oc_user'), 'password' => get_option('wpocbm_oc_password'), 'tags' => array($tag), 'description' => true),
+	'body' => array( 'user' => get_option('oc2wpbm_oc_user'), 'password' => get_option('oc2wpbm_oc_password'), 'tags' => array($tag), 'description' => true),
 	'cookies' => array()
     )
 );
@@ -71,13 +71,13 @@ return $bookmarks;
 }
 
 
-function wp_oc_bm_tablegenerator($bookmarks){
+function oc2wpbm_tablegenerator($bookmarks){
 
-$tablepre=stripslashes(get_option('wpocbm_table_styling'));
-$table_number=get_option('wpocbm_table_number');
-$table_title=get_option('wpocbm_table_title');
-$table_description=get_option('wpocbm_table_description');
-$tablescript=stripslashes(get_option('wpocbm_table_script'));
+$tablepre=stripslashes(get_option('oc2wpbm_table_styling'));
+$table_number=get_option('oc2wpbm_table_number');
+$table_title=get_option('oc2wpbm_table_title');
+$table_description=get_option('oc2wpbm_table_description');
+$tablescript=stripslashes(get_option('oc2wpbm_table_script'));
 
 $tableoutput ="";
 
@@ -100,62 +100,62 @@ $tableoutput .= $tablescript;
 return $tableoutput;
 }
 
-function wp_oc_bm_shortcode($atts) {
+function oc2wpbm_shortcode($atts) {
   $output ="<p>Output mode: ";
   
   $tagArray = shortcode_atts( array('tag' => 'public',), $atts );
   $bmArray;
   
-  if(get_option('wpocbm_op_type')=='sql'){
-  $output = $output . "<font color='green'> SQL mode </p> </font>" . get_option('wpocbm_sql_bmOwner');
+  if(get_option('oc2wpbm_op_type')=='sql'){
+  $output = $output . "<font color='green'> SQL mode </p> </font>" . get_option('oc2wpbm_sql_bmOwner');
   $bookmarks = getBMfromSQL("{$tagArray['tag']}");
-  $output = $output . wp_oc_bm_tablegenerator($bookmarks);
+  $output = $output . oc2wpbm_tablegenerator($bookmarks);
   return $output;
   }
   
-  if(get_option('wpocbm_op_type')=='ocApp'){
+  if(get_option('oc2wpbm_op_type')=='ocApp'){
   $output = $output . "<font color='green'> OC mode </p> </font>";
   $bookmarks = getBMfromOC("{$tagArray['tag']}");
-  $output = $output . wp_oc_bm_tablegenerator($bookmarks);
+  $output = $output . oc2wpbm_tablegenerator($bookmarks);
   return $output;
   }
 
 }
 
-add_shortcode('wp2ocbm', 'wp_oc_bm_shortcode');
+add_shortcode('oc2wpbm', 'oc2wpbm_shortcode');
 
-function wpocbm_configuration_page()
+function oc2wpbm_configuration_page()
 {
 
     if (isset($_POST['info_update']))
     {
         echo '<div id="message" class="updated fade"><p><strong>';
 
-        update_option('wpocbm_op_type', (string)$_POST["wpocbm_op_type"]);
-        update_option('wpocbm_oc_server', (string)$_POST["wpocbm_oc_server"]);
-        update_option('wpocbm_oc_user', (string)$_POST["wpocbm_oc_user"]);
-        update_option('wpocbm_oc_password', (string)$_POST["wpocbm_oc_password"]);
-        update_option('wpocbm_sql_server', (string)$_POST["wpocbm_sql_server"]);
-        update_option('wpocbm_sql_user', (string)$_POST["wpocbm_sql_user"]);
-        update_option('wpocbm_sql_password', (string)$_POST["wpocbm_sql_password"]);
-        update_option('wpocbm_sql_database', (string)$_POST["wpocbm_sql_database"]);
-        update_option('wpocbm_sql_bmOwner', (string)$_POST["wpocbm_sql_bmOwner"]);
-        update_option('wpocbm_table_styling', $_POST["wpocbm_table_styling"]);
-        update_option('wpocbm_table_number', $_POST["wpocbm_table_number"]);
-        update_option('wpocbm_table_title', $_POST["wpocbm_table_title"]);
-        update_option('wpocbm_table_description', $_POST["wpocbm_table_description"]);
-        update_option('wpocbm_table_script', $_POST["wpocbm_table_script"]);
+        update_option('oc2wpbm_op_type', (string)$_POST["oc2wpbm_op_type"]);
+        update_option('oc2wpbm_oc_server', (string)$_POST["oc2wpbm_oc_server"]);
+        update_option('oc2wpbm_oc_user', (string)$_POST["oc2wpbm_oc_user"]);
+        update_option('oc2wpbm_oc_password', (string)$_POST["oc2wpbm_oc_password"]);
+        update_option('oc2wpbm_sql_server', (string)$_POST["oc2wpbm_sql_server"]);
+        update_option('oc2wpbm_sql_user', (string)$_POST["oc2wpbm_sql_user"]);
+        update_option('oc2wpbm_sql_password', (string)$_POST["oc2wpbm_sql_password"]);
+        update_option('oc2wpbm_sql_database', (string)$_POST["oc2wpbm_sql_database"]);
+        update_option('oc2wpbm_sql_bmOwner', (string)$_POST["oc2wpbm_sql_bmOwner"]);
+        update_option('oc2wpbm_table_styling', $_POST["oc2wpbm_table_styling"]);
+        update_option('oc2wpbm_table_number', $_POST["oc2wpbm_table_number"]);
+        update_option('oc2wpbm_table_title', $_POST["oc2wpbm_table_title"]);
+        update_option('oc2wpbm_table_description', $_POST["oc2wpbm_table_description"]);
+        update_option('oc2wpbm_table_script', $_POST["oc2wpbm_table_script"]);
                                 
         echo 'Options Updated!';
         echo '</strong></p></div>';
     }
     
-    $wpocbm_op_type = stripslashes(get_option('wpocbm_op_type'));
+    $oc2wpbm_op_type = stripslashes(get_option('oc2wpbm_op_type'));
 									  
 
 ?>
 
-<form method="post" action="<?php echo $_SERVER["REQUEST_URI"]; ?>" id="wpocbmoptions" class="validate">
+<form method="post" action="<?php echo $_SERVER["REQUEST_URI"]; ?>" id="oc2wpoptions" class="validate">
 <input type="hidden" name="info_update" id="info_update" value="true" />
 <h2>WordPress2Owncloud Bookmarks sharing options</h2>
     
@@ -164,8 +164,8 @@ function wpocbm_configuration_page()
     <p>To make use of this plugin please consider the following steps:</p>
     <ol>
     <li>Configure the SQL Options for your owncloud instance.</li>
-    <li>Add the shortcode <strong>[wp2ocbm]</strong> to a post or page that should contain a table with those bookmarks that have the tag 'public'.</li>
-    <li>Add the shortcode <strong>[wp2ocbm tag="example"]</strong> to a post or page that should contain a table with those bookmarks that have the tag 'example'.</li>
+    <li>Add the shortcode <strong>[oc2wpbm]</strong> to a post or page that should contain a table with those bookmarks that have the tag 'public'.</li>
+    <li>Add the shortcode <strong>[oc2wpbm tag="example"]</strong> to a post or page that should contain a table with those bookmarks that have the tag 'example'.</li>
     <li>Configure the design of the table e. g. like explained in this tutorial.</li>
     </ol>
 
@@ -177,16 +177,16 @@ function wpocbm_configuration_page()
       OC App:
     </td>
     <td align="left">
-    <?php _e('<input type="radio" name="wpocbm_op_type" value="ocApp"') ?>
-    <?php if ($wpocbm_op_type == "ocApp") echo " checked " ?>
+    <?php _e('<input type="radio" name="oc2wpbm_op_type" value="ocApp"') ?>
+    <?php if ($oc2wpbm_op_type == "ocApp") echo " checked " ?>
     <?php _e('/>') ?>
   <tr valign="top">
     <td width="25%" align="right">
       MySQL:
     </td>
     <td align="left">
-    <?php _e('<input type="radio" name="wpocbm_op_type" value="sql"') ?>
-    <?php if ($wpocbm_op_type == "sql") echo " checked "  ?>
+    <?php _e('<input type="radio" name="oc2wpbm_op_type" value="sql"') ?>
+    <?php if ($oc2wpbm_op_type == "sql") echo " checked "  ?>
     <?php _e('/>') ?>
 </td>
 </tr>
@@ -201,7 +201,7 @@ function wpocbm_configuration_page()
       OC App URL:
     </td>
     <td align="left">
-      <input name="wpocbm_oc_server" type="text" size="100" value="<?php echo get_option('wpocbm_oc_server'); ?>"/>
+      <input name="oc2wpbm_oc_server" type="text" size="100" value="<?php echo get_option('oc2wpbm_oc_server'); ?>"/>
     </td>
 </tr>
 <tr valign="top">
@@ -209,7 +209,7 @@ function wpocbm_configuration_page()
       User:
     </td>
     <td align="left">
-      <input name="wpocbm_oc_user" type="text" size="25" value="<?php echo get_option('wpocbm_oc_user'); ?>"/>
+      <input name="oc2wpbm_oc_user" type="text" size="25" value="<?php echo get_option('oc2wpbm_oc_user'); ?>"/>
     </td>
 </tr>
 <tr valign="top">
@@ -217,41 +217,13 @@ function wpocbm_configuration_page()
       Password:
     </td>
     <td align="left">
-      <input name="wpocbm_oc_password" type="password" size="25" value="<?php echo get_option('wpocbm_oc_password'); ?>"/>
+      <input name="oc2wpbm_oc_password" type="password" size="25" value="<?php echo get_option('oc2wpbm_oc_password'); ?>"/>
     </td>
 </tr>
 <tr>
 <td>
 </td>
-<td>
-<?php
-$response = wp_remote_post( get_option('wpocbm_oc_server'), array(
-	'method' => 'POST',
-	'timeout' => 45,
-	'redirection' => 5,
-	'httpversion' => '1.0',
-	'blocking' => true,
-	'headers' => array(),
-	'body' => array( 'user' => get_option('wpocbm_oc_user'), 'password' => get_option('wpocbm_oc_password'), 'tags' => array("example")),
-	'cookies' => array()
-    )
-);
 
-$result = json_decode($response['body']);
-
-if($result ->error==1){
-echo "<font color='red'>";
-echo $result ->message;
-echo "</font>";
-}
-/*print_r($result);*/
-if($result ->status=='error'){
-echo "<font color='red'>";
-echo "Check OC APP URL. OC Server response is: " . $result->data->message;
-echo "</font>";
-}
-?>
-</td>
 </tr>
 </table>
 
@@ -266,7 +238,7 @@ echo "</font>";
       SQL server:
     </td>
     <td align="left">
-      <input name="wpocbm_sql_server" type="text" size="25" value="<?php echo get_option('wpocbm_sql_server'); ?>"/>
+      <input name="oc2wpbm_sql_server" type="text" size="25" value="<?php echo get_option('oc2wpbm_sql_server'); ?>"/>
     </td>
 </tr>
 
@@ -275,7 +247,7 @@ echo "</font>";
       SQL user:
     </td>
     <td align="left">
-      <input name="wpocbm_sql_user" type="text" size="25" value="<?php echo get_option('wpocbm_sql_user'); ?>"/>
+      <input name="oc2wpbm_sql_user" type="text" size="25" value="<?php echo get_option('oc2wpbm_sql_user'); ?>"/>
     </td>
 </tr>
 
@@ -284,7 +256,7 @@ echo "</font>";
       SQL password:
     </td>
     <td align="left">
-      <input name="wpocbm_sql_password" type="password" size="25" value="<?php echo get_option('wpocbm_sql_password'); ?>"/>
+      <input name="oc2wpbm_sql_password" type="password" size="25" value="<?php echo get_option('oc2wpbm_sql_password'); ?>"/>
     </td>
 </tr>
 
@@ -293,7 +265,7 @@ echo "</font>";
       Name of database:
     </td>
     <td align="left">
-      <input name="wpocbm_sql_database" type="text" size="25" value="<?php echo get_option('wpocbm_sql_database'); ?>"/>
+      <input name="oc2wpbm_sql_database" type="text" size="25" value="<?php echo get_option('oc2wpbm_sql_database'); ?>"/>
     </td>
 </tr>
 
@@ -302,7 +274,7 @@ echo "</font>";
       Bookmark owner:
     </td>
     <td align="left">
-      <input name="wpocbm_sql_bmOwner" type="text" size="25" value="<?php echo get_option('wpocbm_sql_bmOwner'); ?>"/><br>
+      <input name="oc2wpbm_sql_bmOwner" type="text" size="25" value="<?php echo get_option('oc2wpbm_sql_bmOwner'); ?>"/><br>
       <i>To display only the bookmarks of a certain owner please enter the username here. Otherwise please enter "all": Bookmarks of all users containing the specified tag will be displayed. </i>
     </td>
     </tr>
@@ -318,7 +290,7 @@ echo "</font>";
       Table styling options:
     </td>
     <td align="left">
-      <input name="wpocbm_table_styling" type="text" size="100" value="<?php echo stripslashes(get_option('wpocbm_table_styling')); ?>" />
+      <input name="oc2wpbm_table_styling" type="text" size="100" value="<?php echo stripslashes(get_option('oc2wpbm_table_styling')); ?>" />
 </tr>
 </table>
 
@@ -330,17 +302,17 @@ echo "</font>";
     </td>
     
     <td align="left" style="width:20px;">
-      <input name="wpocbm_table_number" type="text" size="25" value="<?php echo get_option('wpocbm_table_number'); ?>"/><br>
+      <input name="oc2wpbm_table_number" type="text" size="25" value="<?php echo get_option('oc2wpbm_table_number'); ?>"/><br>
       <i>Number</i>
     </td>
 
     <td align="left" style="width:100px;">
-      <input name="wpocbm_table_title" type="text" size="25" value="<?php echo get_option('wpocbm_table_title'); ?>"/><br>
+      <input name="oc2wpbm_table_title" type="text" size="25" value="<?php echo get_option('oc2wpbm_table_title'); ?>"/><br>
       <i>Title</i>
     </td>
 
     <td align="left" style="width:100px;">
-      <input name="wpocbm_table_description" type="text" size="25" value="<?php echo get_option('wpocbm_table_description'); ?>"/><br>
+      <input name="oc2wpbm_table_description" type="text" size="25" value="<?php echo get_option('oc2wpbm_table_description'); ?>"/><br>
       <i>Description</i>
     </td>
 </tr>
@@ -352,7 +324,7 @@ echo "</font>";
       Table script:
     </td>
     <td align="left">
-      <textarea name="wpocbm_table_script" cols="100" rows="10"> <?php echo stripslashes(get_option('wpocbm_table_script')); ?> </textarea>
+      <textarea name="oc2wpbm_table_script" cols="100" rows="10"> <?php echo stripslashes(get_option('oc2wpbm_table_script')); ?> </textarea>
     </td>
 
 </tr>
@@ -364,17 +336,15 @@ echo "</font>";
   <p class="submit"><input type="submit" name="inf_update" id="submit" class="button" value="<?php _e('Update options'); ?> &raquo;"></p>
    </form>
    Please visit <a href="http://www.momind.eu">the documentation</a> to read more about the use and configuration of this plugin.<br/>
-   
-   </div>
-   
+
 
 <?php	
 }
 
-function wp2ocbm_plugin_menu()
+function oc2wpbm_plugin_menu()
 {
-add_options_page('WP OC BM', 'WP2OC Bookmarks', 'manage_options', __FILE__, 'wpocbm_configuration_page');
+add_options_page('owncCloud 2 WordPress Bookmarks', 'OC2WP Bookmarks', 'manage_options', __FILE__, 'oc2wpbm_configuration_page');
 }
 
-add_action('admin_menu', 'wp2ocbm_plugin_menu');
+add_action('admin_menu', 'oc2wpbm_plugin_menu');
 ?>
