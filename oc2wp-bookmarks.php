@@ -17,9 +17,15 @@ require_once( plugin_dir_path( __FILE__ ) . 'config_page.inc.php' );
 function getBMfromSQL($tag){
   /*configure SQL Server connection data*/
   $sql_server=get_option('oc2wpbm_sql_server');
-  $sql_user =$sqlserver=get_option('oc2wpbm_sql_user');;
-  $sql_password =$sqlserver=get_option('oc2wpbm_sql_password');;
-  $oc_database=$sqlserver=get_option('oc2wpbm_sql_database');;
+  $sql_user =$sqlserver=get_option('oc2wpbm_sql_user');
+  $sql_password =$sqlserver=get_option('oc2wpbm_sql_password');
+  $oc_database=$sqlserver=get_option('oc2wpbm_sql_database');
+  
+  $dsort = 'b.lastmodified ASC';
+  if (get_option('oc2wpbm_table_sort')=='date_desc'){$dsort='b.lastmodified DESC';}
+  
+  echo 'Sortierung' .$dsort;
+  
 
   $bm_term="%". $tag."%";
   /* Filter bookmarks of a certain user or display all bookmarks of the database*/
@@ -35,7 +41,7 @@ function getBMfromSQL($tag){
   
   $OCdb = new wpdb($sql_user, $sql_password, $oc_database, $sql_server); 
   /* Sanitise the query to avoid code & SQL injection. COLLATE UTF8_GENERAL_CI is used so that tags are used caseinsensitive*/
-  $query=$OCdb->prepare("select b.url, b.title, b.description from oc_bookmarks b INNER JOIN oc_bookmarks_tags t on t.bookmark_id=b.id WHERE t.tag COLLATE UTF8_GENERAL_CI LIKE %s AND b.user_id LIKE %s ORDER BY b.lastmodified DESC", $bm_term, $bm_user);
+  $query=$OCdb->prepare("select b.url, b.title, b.description from oc_bookmarks b INNER JOIN oc_bookmarks_tags t on t.bookmark_id=b.id WHERE t.tag COLLATE UTF8_GENERAL_CI LIKE %s AND b.user_id LIKE %s ORDER BY %s", $bm_term, $bm_user, $dsort);
   
   $res = $OCdb->get_results($query);
       
@@ -49,7 +55,11 @@ function getBMfromSQL($tag){
 
 /* get bookmarks in accordance to the defined tag out of ownCloud via the Bookmarks App*/
 function getBMfromOC($tag){
+$sort = 'asc';
+if (get_option('oc2wpbm_table_sort')=='date_desc'){$sort='desc';}
 echo "DAS TAG IST:" . $tag ;
+echo "<br> sort:" .$sort;
+
 $response = wp_remote_post( get_option('oc2wpbm_oc_server'), array(
 	'method' => 'POST',
 	'timeout' => 45,
@@ -57,7 +67,7 @@ $response = wp_remote_post( get_option('oc2wpbm_oc_server'), array(
 	'httpversion' => '1.0',
 	'blocking' => true,
 	'headers' => array(),
-	'body' => array( 'user' => get_option('oc2wpbm_oc_user'), 'password' => get_option('oc2wpbm_oc_password'), 'tags' => array($tag), 'description' => true),
+	'body' => array( 'user' => get_option('oc2wpbm_oc_user'), 'password' => get_option('oc2wpbm_oc_password'), 'tags' => array($tag), 'description' => true, 'datesort'=>$sort),
 	'cookies' => array()
     )
 );

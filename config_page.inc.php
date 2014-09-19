@@ -14,6 +14,7 @@ function oc2wpbm_configuration_page(){
         update_option('oc2wpbm_sql_password', (string)$_POST["oc2wpbm_sql_password"]);
         update_option('oc2wpbm_sql_database', (string)$_POST["oc2wpbm_sql_database"]);
         update_option('oc2wpbm_sql_bmOwner', (string)$_POST["oc2wpbm_sql_bmOwner"]);
+        update_option('oc2wpbm_table_sort', (string)$_POST["oc2wpbm_table_sort"]);
         update_option('oc2wpbm_table_styling', $_POST["oc2wpbm_table_styling"]);
         update_option('oc2wpbm_table_number', $_POST["oc2wpbm_table_number"]);
         update_option('oc2wpbm_table_title', $_POST["oc2wpbm_table_title"]);
@@ -24,6 +25,7 @@ function oc2wpbm_configuration_page(){
         echo '</strong></p></div>';
     }
     
+    $oc2wpbm_table_sort = stripslashes(get_option('oc2wpbm_table_sort'));
     $oc2wpbm_op_type = stripslashes(get_option('oc2wpbm_op_type'));
 									  
 ?>
@@ -123,6 +125,7 @@ function oc2wpbm_configuration_page(){
     <td align="left">
       <input name="oc2wpbm_oc_password" type="password" size="25" value="<?php echo get_option('oc2wpbm_oc_password'); ?>"/>
     </td>
+</tr>
 </tr>
 <tr>
 <td>
@@ -224,6 +227,18 @@ function oc2wpbm_configuration_page(){
 <fieldset>
 <legend><h3>Table layout options</h3></legend>
 <table width="100%" border="0" cellspacing="0" cellpadding="6">
+
+<tr valign="top">
+    <td width="25%" align="right">
+      Sorting bookmarks:
+    </td>
+    <td align="left">
+    <select id="oc2wpbm_table_sort" name="oc2wpbm_table_sort">
+    <?php _e('<option value="date_asc"') ?><?php if ($oc2wpbm_table_sort == "date_asc") echo " selected " ?><?php _e('>last modification date ascending</option>') ?>
+    <?php _e('<option value="date_desc"') ?><?php if ($oc2wpbm_table_sort == "date_desc") echo " selected " ?><?php _e('>last modification date descending</option>') ?>
+    </select>
+    </td>
+</tr>
     
 <tr valign="top">
     <td width="25%" align="right">
