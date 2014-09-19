@@ -1,7 +1,7 @@
 === Plugin Name ===
 Contributors: Mario Nolte
 Donate link: https://www.momind.eu/
-Tags: owncloud, Bookmarks
+Tags: owncloud, Bookmarks, api, integration, shortcode
 Requires at least: 3.9.2
 Tested up to: 4.0.0
 Stable tag: 1.2.8
