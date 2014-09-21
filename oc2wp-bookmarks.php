@@ -9,6 +9,13 @@ Author URI: http://www.momind.eu
 Licenc:  GPLv2
 */ 
 
+function wp_pp_plugin_install ()
+{
+	// Some default options
+	add_option('oc2wpbm_table_title_display', '1');
+	add_option('oc2wpbm_table_title_label', 'Label');
+	}
+
 /*import the class file for Bookmark Class*/
 require_once( plugin_dir_path( __FILE__ ) . 'bookmark.inc.php' );
 require_once( plugin_dir_path( __FILE__ ) . 'config_page.inc.php' );
@@ -84,9 +91,9 @@ return $bookmarks;
 function oc2wpbm_tablegenerator($bookmarks){
 
 $tablepre=stripslashes(get_option('oc2wpbm_table_styling'));
-$table_number=get_option('oc2wpbm_table_number');
-$table_title=get_option('oc2wpbm_table_title');
-$table_description=get_option('oc2wpbm_table_description');
+$table_number=get_option('oc2wpbm_table_number_label');
+$table_title=get_option('oc2wpbm_table_title_label');
+$table_description=get_option('oc2wpbm_table_description_label');
 $tablescript=stripslashes(get_option('oc2wpbm_table_script'));
 
 $tableoutput ="";

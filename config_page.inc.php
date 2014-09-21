@@ -16,9 +16,16 @@ function oc2wpbm_configuration_page(){
         update_option('oc2wpbm_sql_bmOwner', (string)$_POST["oc2wpbm_sql_bmOwner"]);
         update_option('oc2wpbm_table_sort', (string)$_POST["oc2wpbm_table_sort"]);
         update_option('oc2wpbm_table_styling', $_POST["oc2wpbm_table_styling"]);
-        update_option('oc2wpbm_table_number', $_POST["oc2wpbm_table_number"]);
-        update_option('oc2wpbm_table_title', $_POST["oc2wpbm_table_title"]);
-        update_option('oc2wpbm_table_description', $_POST["oc2wpbm_table_description"]);
+        update_option('oc2wpbm_table_number_display', ($_POST['oc2wpbm_table_number_display']=='1') ? '1':'-1' );
+        update_option('oc2wpbm_table_number_label', $_POST["oc2wpbm_table_number_label"]);
+        update_option('oc2wpbm_table_title_display', ($_POST['oc2wpbm_table_title_display']=='1') ? '1':'-1' );
+        update_option('oc2wpbm_table_title_label', $_POST["oc2wpbm_table_title_label"]);
+        update_option('oc2wpbm_table_description_label', $_POST["oc2wpbm_table_description_label"]);
+        update_option('oc2wpbm_table_description_display', ($_POST['oc2wpbm_table_description_display']=='1') ? '1':'-1' );
+        update_option('oc2wpbm_table_tags_label', $_POST["oc2wpbm_table_tags_label"]);
+        update_option('oc2wpbm_table_tags_display', ($_POST['oc2wpbm_table_tags_display']=='1') ? '1':'-1' );
+        update_option('oc2wpbm_table_lastmodified_label', $_POST["oc2wpbm_table_lastmodified_label"]);
+        update_option('oc2wpbm_table_lastmodified_display', ($_POST['oc2wpbm_table_lastmodified_display']=='1') ? '1':'-1' );
         update_option('oc2wpbm_table_script', $_POST["oc2wpbm_table_script"]);
                                 
         echo 'Options Updated!';
@@ -250,25 +257,55 @@ function oc2wpbm_configuration_page(){
 </table>
 
 <table width="100%" border="0" cellspacing="0" cellpadding="6">
-   
+
+
+<tr valign="top">
+    <td width="25%" align="right">
+      Display:
+    </td>
+    <td>
+      <input name="oc2wpbm_table_number_display" type="checkbox"<?php if(get_option('oc2wpbm_table_number_display')!='-1') echo ' checked="checked"'; ?> value="1"/>
+    </td>
+    <td>
+      <input name="oc2wpbm_table_title_display" type="checkbox"<?php if(get_option('oc2wpbm_table_title_display')!='-1') echo ' checked="checked"'; ?> value="1"/>
+    </td>
+        <td>
+      <input name="oc2wpbm_table_description_display" type="checkbox"<?php if(get_option('oc2wpbm_table_description_display')!='-1') echo ' checked="checked"'; ?> value="1"/>
+    </td>
+        <td>
+      <input name="oc2wpbm_table_tags_display" type="checkbox"<?php if(get_option('oc2wpbm_table_tags_display')!='-1') echo ' checked="checked"'; ?> value="1"/>
+    </td>
+        <td>
+      <input name="oc2wpbm_table_lastmodified_display" type="checkbox"<?php if(get_option('oc2wpbm_table_lastmodified_display')!='-1') echo ' checked="checked"'; ?> value="1"/>
+    </td>
+</tr>
+
 <tr valign="top">
     <td width="25%" align="right">
       Labeling:
     </td>
     
     <td align="left" style="width:20px;">
-      <input name="oc2wpbm_table_number" type="text" size="25" value="<?php echo get_option('oc2wpbm_table_number'); ?>"/><br>
+      <input name="oc2wpbm_table_number_label" type="text" size="15" value="<?php echo get_option('oc2wpbm_table_number_label'); ?>"/><br>
       <i>Number</i>
     </td>
 
     <td align="left" style="width:100px;">
-      <input name="oc2wpbm_table_title" type="text" size="25" value="<?php echo get_option('oc2wpbm_table_title'); ?>"/><br>
+      <input name="oc2wpbm_table_title_label" type="text" size="15" value="<?php echo get_option('oc2wpbm_table_title_label'); ?>"/><br>
       <i>Title</i>
     </td>
 
     <td align="left" style="width:100px;">
-      <input name="oc2wpbm_table_description" type="text" size="25" value="<?php echo get_option('oc2wpbm_table_description'); ?>"/><br>
+      <input name="oc2wpbm_table_description_label" type="text" size="15" value="<?php echo get_option('oc2wpbm_table_description_label'); ?>"/><br>
       <i>Description</i>
+    </td>
+    <td align="left" style="width:100px;">
+      <input name="oc2wpbm_table_tags_label" type="text" size="15" value="<?php echo get_option('oc2wpbm_table_tags_label'); ?>"/><br>
+      <i>Tags</i>
+    </td>
+    <td align="left" style="width:100px;">
+      <input name="oc2wpbm_table_lastmodified_label" type="text" size="15" value="<?php echo get_option('oc2wpbm_table_lastmodified_label'); ?>"/><br>
+      <i>Date last modified</i>
     </td>
 </tr>
 </table>
