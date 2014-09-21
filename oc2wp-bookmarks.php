@@ -9,7 +9,7 @@ Author URI: http://www.momind.eu
 Licenc:  GPLv2
 */ 
 
-function wp_pp_plugin_install ()
+function oc2wpbm_plugin_install ()
 {
 	// Some default options
 	add_option('oc2wpbm_table_title_display', '1');
@@ -94,19 +94,49 @@ $tablepre=stripslashes(get_option('oc2wpbm_table_styling'));
 $table_number=get_option('oc2wpbm_table_number_label');
 $table_title=get_option('oc2wpbm_table_title_label');
 $table_description=get_option('oc2wpbm_table_description_label');
+$table_tags=get_option('oc2wpbm_table_tags_label');
+$table_lastmodified=get_option('oc2wpbm_table_lastmodified_label');
 $tablescript=stripslashes(get_option('oc2wpbm_table_script'));
 
 $tableoutput ="";
 
 $tableoutput .= "<table " . $tablepre .">";
-$tableoutput .= "<thead> <tr> <th class='column-1'> ".$table_number ." </th> <th class='column-2'>" .$table_title ." </th><th class='column-3'> ".$table_description. " </th></tr></thead>";
+$tableoutput .= "<thead> <tr> ";
+if(get_option('oc2wpbm_table_number_display')=='1'){
+  $tableoutput .= "<th class='column-1'> ".$table_number ." </th>"; 
+  }
+if(get_option('oc2wpbm_table_title_display')=='1'){
+  $tableoutput .= "<th class='column-2'>" .$table_title ." </th>";
+  }
+if(get_option('oc2wpbm_table_description_display')=='1'){
+  $tableoutput .= "<th class='column-3'> ".$table_description. " </th>";
+  }
+if(get_option('oc2wpbm_table_tags_display')=='1'){
+  $tableoutput .= "<th class='column-4'> ".$table_tags. " </th>";
+  }
+if(get_option('oc2wpbm_table_lastmodified_display')=='1'){
+  $tableoutput .= "<th class='column-5'> ".$table_lastmodified. " </th>";
+  }
+$tableoutput .= "</tr></thead>";
 $tableoutput .= "<tbody>";
 	  
   for ($i=0; $i<count($bookmarks); $i++){
   $tableoutput .= "<tr>";
-  $tableoutput .= "<td class='column-1'>" . ($i+1) . "</td>";
-  $tableoutput .= "<td class='column-2'> <a href ='" . $bookmarks[$i]->link . "' target='_blank'> ".$bookmarks[$i]->title . "</a> </td>";
-  $tableoutput .= "<td class='column-3'>" . $bookmarks[$i]->description . " </td>";
+    if(get_option('oc2wpbm_table_number_display')=='1'){
+      $tableoutput .= "<td class='column-1'>" . ($i+1) . "</td>";
+      }
+    if(get_option('oc2wpbm_table_title_display')=='1'){
+      $tableoutput .= "<td class='column-2'> <a href ='" . $bookmarks[$i]->link . "' target='_blank'> ".$bookmarks[$i]->title . "</a> </td>";
+      }
+    if(get_option('oc2wpbm_table_description_display')=='1'){
+      $tableoutput .= "<td class='column-3'>" . $bookmarks[$i]->description . " </td>";
+      }
+    if(get_option('oc2wpbm_table_tags_display')=='1'){
+      $tableoutput .= "<td class='column-4'>" . $bookmarks[$i]->description . " </td>";
+      }
+    if(get_option('oc2wpbm_table_lastmodified_display')=='1'){
+      $tableoutput .= "<td class='column-5'>" . $bookmarks[$i]->description . " </td>";
+      }
   $tableoutput .= "</tr>";
   }
 
