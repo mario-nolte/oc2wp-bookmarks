@@ -5,14 +5,18 @@ class bookmark {
     private $title;
     private $link;
     private $description;
+    private $tags;
+    private $dateLastModified;
     
 
     /* create a Bookmark */
-    function __construct($title, $link, $description)
+    function __construct($title, $link, $description, $tags, $dateLastModified)
     {
         $this->title        = $title;
         $this->link         = $link;
         $this->description  = $description;
+        $this->tags  = $tags;
+        $this->dateLastModified  = $dateLastModified;
     }
     
  public function __get($property) {
