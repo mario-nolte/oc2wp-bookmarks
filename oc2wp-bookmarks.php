@@ -74,7 +74,7 @@ $response = wp_remote_post( get_option('oc2wpbm_oc_server'), array(
 	'httpversion' => '1.0',
 	'blocking' => true,
 	'headers' => array(),
-	'body' => array( 'user' => get_option('oc2wpbm_oc_user'), 'password' => get_option('oc2wpbm_oc_password'), 'tags' => array($tag), 'description' => true, 'datesort'=>$sort),
+	'body' => array( 'user' => get_option('oc2wpbm_oc_user'), 'password' => get_option('oc2wpbm_oc_password'), 'tags' => array("test", "example"), 'description' => true, 'datesort'=>$sort),
 	'cookies' => array()
     )
 );
@@ -82,7 +82,7 @@ $response = wp_remote_post( get_option('oc2wpbm_oc_server'), array(
 $result = json_decode($response['body']);
 
 for ($i=0; $i<count($result); $i++){
-$bookmarks[$i]=new bookmark($result[$i] ->title, $result[$i] ->url, $result[$i] ->description);
+$bookmarks[$i]=new bookmark($result[$i] ->title, $result[$i] ->url, $result[$i] ->description, $result[$i] ->tags, $result[$i] ->lastmodified);
 }
 return $bookmarks;
 }
@@ -95,7 +95,7 @@ $table_number=get_option('oc2wpbm_table_number_label');
 $table_title=get_option('oc2wpbm_table_title_label');
 $table_description=get_option('oc2wpbm_table_description_label');
 $table_tags=get_option('oc2wpbm_table_tags_label');
-$table_lastmodified=get_option('oc2wpbm_table_lastmodified_label');
+$table_lastmodified = get_option('oc2wpbm_table_lastmodified_label');
 $tablescript=stripslashes(get_option('oc2wpbm_table_script'));
 
 $tableoutput ="";
@@ -121,6 +121,8 @@ $tableoutput .= "</tr></thead>";
 $tableoutput .= "<tbody>";
 	  
   for ($i=0; $i<count($bookmarks); $i++){
+  $tags = $bookmarks[$i] ->tags;
+  
   $tableoutput .= "<tr>";
     if(get_option('oc2wpbm_table_number_display')=='1'){
       $tableoutput .= "<td class='column-1'>" . ($i+1) . "</td>";
@@ -132,10 +134,14 @@ $tableoutput .= "<tbody>";
       $tableoutput .= "<td class='column-3'>" . $bookmarks[$i]->description . " </td>";
       }
     if(get_option('oc2wpbm_table_tags_display')=='1'){
-      $tableoutput .= "<td class='column-4'>" . $bookmarks[$i]->description . " </td>";
+      $tableoutput .= "<td class='column-4'>"; 
+	for($j=0; $j<count($tags); $j++){$tableoutput .= $tags[$j];
+	if ($j+1<count($tags)){$tableoutput .= ", "; }
+	}
+      $tableoutput .= " </td>";
       }
     if(get_option('oc2wpbm_table_lastmodified_display')=='1'){
-      $tableoutput .= "<td class='column-5'>" . $bookmarks[$i]->description . " </td>";
+      $tableoutput .= "<td class='column-5'>" . date("Y-m-d", $bookmarks[$i]->dateLastModified) . " </td>";
       }
   $tableoutput .= "</tr>";
   }
