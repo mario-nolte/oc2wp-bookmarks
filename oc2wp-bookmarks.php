@@ -61,10 +61,14 @@ function getBMfromSQL($tag){
 }
 
 /* get bookmarks in accordance to the defined tag out of ownCloud via the Bookmarks App*/
-function getBMfromOC($tag){
+function getBMfromOC($tags){
+//setting sorting options
 $sort = 'asc';
 if (get_option('oc2wpbm_table_sort')=='date_desc'){$sort='desc';}
-echo "DAS TAG IST:" . $tag ;
+
+
+echo "<br> Die TAGs sind: " ;
+for($i=0; $i<count($tags);$i++){echo " ". $i . ".tag=" . $tags[$i];};
 echo "<br> sort:" .$sort;
 
 $response = wp_remote_post( get_option('oc2wpbm_oc_server'), array(
@@ -74,7 +78,7 @@ $response = wp_remote_post( get_option('oc2wpbm_oc_server'), array(
 	'httpversion' => '1.0',
 	'blocking' => true,
 	'headers' => array(),
-	'body' => array( 'user' => get_option('oc2wpbm_oc_user'), 'password' => get_option('oc2wpbm_oc_password'), 'tags' => array("test", "example"), 'description' => true, 'datesort'=>$sort),
+	'body' => array( 'user' => get_option('oc2wpbm_oc_user'), 'password' => get_option('oc2wpbm_oc_password'), 'tags' => $tags, 'description' => true, 'datesort'=>$sort),
 	'cookies' => array()
     )
 );
@@ -155,20 +159,28 @@ return $tableoutput;
 
 /* Coordinates the mehod call related to the operation mode and returns the HTML code which replaces the shortcode in pages and posts*/
 function oc2wpbm_shortcode($atts) {
-  $tagArray = shortcode_atts( array('tag' => 'public',), $atts );
-  $bmArray;
+  $shortcodeArray = shortcode_atts( array('tags' => 'public', 'connector' => 'OR',), $atts );
+  // free shortcode from spaces next to the commata and transform the commata separated tags into an array  
+  $tagsText=$shortcodeArray['tags'];
+  $tagsText = ereg_replace (', ', ',', $tagsText );
+  $tagsText = ereg_replace (' , ', ',', $tagsText );
+  $tagsText = ereg_replace (' ,', ',', $tagsText );
+  $tagArray = explode(',', $tagsText);
+  echo "tagArray";
+  print_r($tagArray);
+
   
+    
   if(get_option('oc2wpbm_op_type')=='sql'){
-    $bookmarks = getBMfromSQL("{$tagArray['tag']}");
-    $output = $output . oc2wpbm_tablegenerator($bookmarks);
-  return $output;
+    $bookmarks = getBMfromSQL($tagArray);
   }
   
   if(get_option('oc2wpbm_op_type')=='ocApp'){
-    $bookmarks = getBMfromOC("{$tagArray['tag']}");
-    $output = $output . oc2wpbm_tablegenerator($bookmarks);
-  return $output;
+    $bookmarks = getBMfromOC($tagArray);
   }
+  
+      $output = $output . oc2wpbm_tablegenerator($bookmarks);
+  return $output;
 }
 
 /* Hooks shortcode oc2wpbm into WordPress*/
