@@ -157,7 +157,20 @@ $tableoutput .= $tablescript;
 return $tableoutput;
 }
 
-/* Coordinates the mehod call related to the operation mode and returns the HTML code which replaces the shortcode in pages and posts*/
+//copies those Bookmarks out of $bookmarks into a new array that have not all tags contained in $tagArray. Unfortunatley unset() left articfacts in the array so that this copy-into-a-new-array-approach was chosen.
+function oc2wpbm_filterBookmarks($bookmarks, $tagArray) {
+  $j=0;
+  for ($i=0; $i<count($bookmarks); $i++){
+    if(array_diff($tagArray, $bookmarks[$i]->tags)==null){
+      $newBookmarks[$j]=$bookmarks[$i];
+      $j=$j+1;      
+     };
+  }
+
+return $newBookmarks;
+}
+
+/* Coordinates the mehod call related to the operation mode & the connector and returns the HTML code which replaces the shortcode in pages and posts*/
 function oc2wpbm_shortcode($atts) {
   $shortcodeArray = shortcode_atts( array('tags' => 'public', 'connector' => 'OR',), $atts );
   // free shortcode from spaces next to the commata...
@@ -167,17 +180,18 @@ function oc2wpbm_shortcode($atts) {
   $tagsText = ereg_replace (' ,', ',', $tagsText );
   //...  and transform the commata separated tags into an array  
   $tagArray = explode(',', $tagsText);
-  echo "tagArray";
-  print_r($tagArray);
-
-  
-    
+      
   if(get_option('oc2wpbm_op_type')=='sql'){
     $bookmarks = getBMfromSQL($tagArray);
   }
   
   if(get_option('oc2wpbm_op_type')=='ocApp'){
     $bookmarks = getBMfromOC($tagArray);
+  }
+  
+  //while the OR connector needs no further operations (all Bookmarks can be deployed in the table), the AND connector requires to delete within the $bookmark array all those bookmarks that contain not all Bookmarks
+  if($shortcodeArray['connector']=='AND'){
+  $bookmarks = oc2wpbm_filterBookmarks($bookmarks, $tagArray);
   }
   
       $output = $output . oc2wpbm_tablegenerator($bookmarks);
