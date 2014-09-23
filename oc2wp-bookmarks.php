@@ -160,11 +160,12 @@ return $tableoutput;
 /* Coordinates the mehod call related to the operation mode and returns the HTML code which replaces the shortcode in pages and posts*/
 function oc2wpbm_shortcode($atts) {
   $shortcodeArray = shortcode_atts( array('tags' => 'public', 'connector' => 'OR',), $atts );
-  // free shortcode from spaces next to the commata and transform the commata separated tags into an array  
+  // free shortcode from spaces next to the commata...
   $tagsText=$shortcodeArray['tags'];
   $tagsText = ereg_replace (', ', ',', $tagsText );
   $tagsText = ereg_replace (' , ', ',', $tagsText );
   $tagsText = ereg_replace (' ,', ',', $tagsText );
+  //...  and transform the commata separated tags into an array  
   $tagArray = explode(',', $tagsText);
   echo "tagArray";
   print_r($tagArray);
