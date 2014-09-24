@@ -21,7 +21,7 @@ require_once( plugin_dir_path( __FILE__ ) . 'bookmark.inc.php' );
 require_once( plugin_dir_path( __FILE__ ) . 'config_page.inc.php' );
 
 /* get bookmarks in accordance to the defined tag and the specified user (as owner of the bookmarks) out of the database and return an array of bookmarks*/
-function getBMfromSQL($tag){
+function getBMfromSQL($tag, $order){
   /*configure SQL Server connection data*/
   $sql_server=get_option('oc2wpbm_sql_server');
   $sql_user =$sqlserver=get_option('oc2wpbm_sql_user');
@@ -29,7 +29,7 @@ function getBMfromSQL($tag){
   $oc_database=$sqlserver=get_option('oc2wpbm_sql_database');
   
   $dsort = 'b.lastmodified ASC';
-  if (get_option('oc2wpbm_table_sort')=='date_desc'){$dsort='b.lastmodified DESC';}
+  if ($order=='desc'){$dsort='b.lastmodified DESC';}
   
   echo 'Sortierung' .$dsort;
   
@@ -61,15 +61,12 @@ function getBMfromSQL($tag){
 }
 
 /* get bookmarks in accordance to the defined tag out of ownCloud via the Bookmarks App*/
-function getBMfromOC($tags){
+function getBMfromOC($tags, $order){
 //setting sorting options
-$sort = 'asc';
-if (get_option('oc2wpbm_table_sort')=='date_desc'){$sort='desc';}
-
 
 echo "<br> Die TAGs sind: " ;
 for($i=0; $i<count($tags);$i++){echo " ". $i . ".tag=" . $tags[$i];};
-echo "<br> sort:" .$sort;
+echo "<br> sort:" .$order;
 
 $response = wp_remote_post( get_option('oc2wpbm_oc_server'), array(
 	'method' => 'POST',
@@ -78,7 +75,7 @@ $response = wp_remote_post( get_option('oc2wpbm_oc_server'), array(
 	'httpversion' => '1.0',
 	'blocking' => true,
 	'headers' => array(),
-	'body' => array( 'user' => get_option('oc2wpbm_oc_user'), 'password' => get_option('oc2wpbm_oc_password'), 'tags' => $tags, 'description' => true, 'datesort'=>$sort),
+	'body' => array( 'user' => get_option('oc2wpbm_oc_user'), 'password' => get_option('oc2wpbm_oc_password'), 'tags' => $tags, 'description' => true, 'datesort'=>$order),
 	'cookies' => array()
     )
 );
@@ -170,9 +167,14 @@ function oc2wpbm_filterBookmarks($bookmarks, $tagArray) {
 return $newBookmarks;
 }
 
-/* Coordinates the mehod call related to the operation mode & the connector and returns the HTML code which replaces the shortcode in pages and posts*/
+/* Coordinates the mehod call related to the operation mode & the connector and returns the HTML code which replaces the shortcode in pages and posts
+   Parameter: $tags = tags the Bookmark should contain
+	      $connector: AND = Bookmarks that have one of the given tags (default case) | OR = Bookmarks that contain the set of given tags
+	      $order: ASC = List of Bookmarks is ordered by 'last modified date' ascending (default case) | DESC = List of Bookmarks is ordered by 'last modified date' descending
+
+*/
 function oc2wpbm_shortcode($atts) {
-  $shortcodeArray = shortcode_atts( array('tags' => 'public', 'connector' => 'OR',), $atts );
+  $shortcodeArray = shortcode_atts( array('tags' => 'public', 'connector' => 'OR','order' => 'asc',), $atts );
   // free shortcode from spaces next to the commata...
   $tagsText=$shortcodeArray['tags'];
   $tagsText = ereg_replace (', ', ',', $tagsText );
@@ -186,7 +188,7 @@ function oc2wpbm_shortcode($atts) {
   }
   
   if(get_option('oc2wpbm_op_type')=='ocApp'){
-    $bookmarks = getBMfromOC($tagArray);
+    $bookmarks = getBMfromOC($tagArray, $shortcodeArray['order']);
   }
   
   //while the OR connector needs no further operations (all Bookmarks can be deployed in the table), the AND connector requires to delete within the $bookmark array all those bookmarks that contain not all Bookmarks
