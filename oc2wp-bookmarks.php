@@ -21,20 +21,15 @@ require_once( plugin_dir_path( __FILE__ ) . 'bookmark.inc.php' );
 require_once( plugin_dir_path( __FILE__ ) . 'config_page.inc.php' );
 
 /* get bookmarks in accordance to the defined tag and the specified user (as owner of the bookmarks) out of the database and return an array of bookmarks*/
-function getBMfromSQL($tag, $order){
+function getBMfromSQL($tags, $order){
   /*configure SQL Server connection data*/
   $sql_server=get_option('oc2wpbm_sql_server');
   $sql_user =$sqlserver=get_option('oc2wpbm_sql_user');
   $sql_password =$sqlserver=get_option('oc2wpbm_sql_password');
   $oc_database=$sqlserver=get_option('oc2wpbm_sql_database');
   
-  $dsort = 'b.lastmodified ASC';
-  if ($order=='desc'){$dsort='b.lastmodified DESC';}
-  
-  echo 'Sortierung' .$dsort;
-  
 
-  $bm_term="%". $tag."%";
+  $bm_term= implode("','", $tags);
   /* Filter bookmarks of a certain user or display all bookmarks of the database*/
   if (get_option('oc2wpbm_sql_bmOwner')=='all'){
       $bm_user='%';}
@@ -48,14 +43,19 @@ function getBMfromSQL($tag, $order){
   
   $OCdb = new wpdb($sql_user, $sql_password, $oc_database, $sql_server); 
   /* Sanitise the query to avoid code & SQL injection. COLLATE UTF8_GENERAL_CI is used so that tags are used caseinsensitive*/
-  $query=$OCdb->prepare("select b.url, b.title, b.description from oc_bookmarks b INNER JOIN oc_bookmarks_tags t on t.bookmark_id=b.id WHERE t.tag COLLATE UTF8_GENERAL_CI LIKE %s AND b.user_id LIKE %s ORDER BY %s", $bm_term, $bm_user, $dsort);
-  
+  $query=$OCdb->prepare("select b.url, b.title, b.description, t.tag as tags, b.lastmodified from oc_bookmarks b INNER JOIN oc_bookmarks_tags t on t.bookmark_id=b.id WHERE t.tag COLLATE UTF8_GENERAL_CI IN (%s) AND b.user_id LIKE %s ORDER BY b.lastmodified ASC", $bm_term, $bm_user);
+  if ($order=='desc'){
+  /* Due to the prepare() function sorting cannot be handeld as variable */
+  $query=$OCdb->prepare("select b.url, b.title, b.description, t.tag as tags, b.lastmodified from oc_bookmarks b INNER JOIN oc_bookmarks_tags t on t.bookmark_id=b.id WHERE t.tag COLLATE UTF8_GENERAL_CI IN (%s) AND b.user_id LIKE %s ORDER BY b.lastmodified DESC", $bm_term, $bm_user);
+  }
+  $query=stripslashes($query);
   $res = $OCdb->get_results($query);
       
   /*create array containing BM objects*/
   for ($i=0; $i<count($res); $i++){
-	$bookmarks[$i]=new bookmark($res[$i] ->title, $res[$i] ->url, $res[$i] ->description );
-      }
+	$bookmarks[$i]=new bookmark($res[$i] ->title, $res[$i] ->url, $res[$i] ->description, array($res[$i] ->tags), $res[$i] ->lastmodified);
+	}
+	
   
     return $bookmarks;
 }
@@ -184,7 +184,7 @@ function oc2wpbm_shortcode($atts) {
   $tagArray = explode(',', $tagsText);
       
   if(get_option('oc2wpbm_op_type')=='sql'){
-    $bookmarks = getBMfromSQL($tagArray);
+    $bookmarks = getBMfromSQL($tagArray, $shortcodeArray['order']);
   }
   
   if(get_option('oc2wpbm_op_type')=='ocApp'){
