@@ -43,17 +43,17 @@ function getBMfromSQL($tags, $order){
   
   $OCdb = new wpdb($sql_user, $sql_password, $oc_database, $sql_server); 
   /* Sanitise the query to avoid code & SQL injection. COLLATE UTF8_GENERAL_CI is used so that tags are used caseinsensitive*/
-  $query=$OCdb->prepare("select b.url, b.title, b.description, t.tag as tags, b.lastmodified from oc_bookmarks b INNER JOIN oc_bookmarks_tags t on t.bookmark_id=b.id WHERE t.tag COLLATE UTF8_GENERAL_CI IN (%s) AND b.user_id LIKE %s ORDER BY b.lastmodified ASC", $bm_term, $bm_user);
-  if ($order=='desc'){
+  $query=$OCdb->prepare("select b.url, b.title, b.description, GROUP_CONCAT(t.tag SEPARATOR ', ') as tags, b.lastmodified from oc_bookmarks b LEFT JOIN oc_bookmarks_tags t on b.id=t.bookmark_id WHERE t.tag COLLATE UTF8_GENERAL_CI IN (%s) AND b.user_id LIKE %s group by id ORDER BY b.lastmodified ASC", $bm_term, $bm_user);
+  if (strcasecmp($order,'desc')==0){
   /* Due to the prepare() function sorting cannot be handeld as variable */
-  $query=$OCdb->prepare("select b.url, b.title, b.description, t.tag as tags, b.lastmodified from oc_bookmarks b INNER JOIN oc_bookmarks_tags t on t.bookmark_id=b.id WHERE t.tag COLLATE UTF8_GENERAL_CI IN (%s) AND b.user_id LIKE %s ORDER BY b.lastmodified DESC", $bm_term, $bm_user);
+  $query=$OCdb->prepare("select b.url, b.title, b.description, GROUP_CONCAT(t.tag SEPARATOR ', ') as tags, b.lastmodified from oc_bookmarks b LEFT JOIN oc_bookmarks_tags t on b.id=t.bookmark_id WHERE t.tag COLLATE UTF8_GENERAL_CI IN (%s) AND b.user_id LIKE %s group by id ORDER BY b.lastmodified DESC", $bm_term, $bm_user);
   }
   $query=stripslashes($query);
   $res = $OCdb->get_results($query);
       
   /*create array containing BM objects*/
   for ($i=0; $i<count($res); $i++){
-	$bookmarks[$i]=new bookmark($res[$i] ->title, $res[$i] ->url, $res[$i] ->description, array($res[$i] ->tags), $res[$i] ->lastmodified);
+	$bookmarks[$i]=new bookmark($res[$i] ->title, $res[$i] ->url, $res[$i] ->description, explode(', ', $res[$i] ->tags), $res[$i] ->lastmodified);
 	}
 	
   
@@ -192,7 +192,7 @@ function oc2wpbm_shortcode($atts) {
   }
   
   //while the OR connector needs no further operations (all Bookmarks can be deployed in the table), the AND connector requires to delete within the $bookmark array all those bookmarks that contain not all Bookmarks
-  if($shortcodeArray['connector']=='AND'){
+  if(strcasecmp($shortcodeArray['connector'],'AND')==0){
   $bookmarks = oc2wpbm_filterBookmarks($bookmarks, $tagArray);
   }
   
