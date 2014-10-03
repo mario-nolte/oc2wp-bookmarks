@@ -13,7 +13,6 @@ function oc2wpbm_configuration_page(){
         update_option('oc2wpbm_sql_user', (string)$_POST["oc2wpbm_sql_user"]);
         update_option('oc2wpbm_sql_password', (string)$_POST["oc2wpbm_sql_password"]);
         update_option('oc2wpbm_sql_database', (string)$_POST["oc2wpbm_sql_database"]);
-        update_option('oc2wpbm_sql_tableprefix', (string)$_POST["oc2wpbm_sql_tableprefix"]);
         update_option('oc2wpbm_sql_bmOwner', (string)$_POST["oc2wpbm_sql_bmOwner"]);
         update_option('oc2wpbm_table_styling', $_POST["oc2wpbm_table_styling"]);
         update_option('oc2wpbm_table_number_display', ($_POST['oc2wpbm_table_number_display']=='1') ? '1':'-1' );
@@ -214,15 +213,6 @@ function oc2wpbm_configuration_page(){
     </td>
     <td align="left">
       <input name="oc2wpbm_sql_database" type="text" size="25" value="<?php echo get_option('oc2wpbm_sql_database'); ?>"/>
-    </td>
-</tr>
-
-<tr valign="top">
-    <td width="25%" align="right">
-      Table prefix for ownCloud database tables:
-    </td>
-    <td align="left">
-      <input name="oc2wpbm_sql_tableprefix" type="text" size="25" value="<?php echo get_option('oc2wpbm_sql_tableprefix'); ?>"/>
     </td>
 </tr>
 
