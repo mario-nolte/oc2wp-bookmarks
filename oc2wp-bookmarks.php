@@ -9,12 +9,26 @@ Author URI: http://www.momind.eu
 Licenc:  GPLv2
 */ 
 
+/* set some default options */
 function oc2wpbm_plugin_install ()
 {
-	// Some default options
 	add_option('oc2wpbm_table_title_display', '1');
-	add_option('oc2wpbm_table_title_label', 'Label');
+	add_option('oc2wpbm_table_title_label', 'Title');
+	add_option('oc2wpbm_table_number_display', '-1');
+	add_option('oc2wpbm_table_number_label', 'Entry');
+	add_option('oc2wpbm_table_description_display', '1');
+	add_option('oc2wpbm_table_description_label', 'Description');
+	add_option('oc2wpbm_table_tags_display', '-1');
+	add_option('oc2wpbm_table_tags_label', 'Tags');
+	add_option('oc2wpbm_table_lastmodified_display', '-1');
+	add_option('oc2wpbm_table_lastmodified_label', 'Last change');
+	add_option('oc2wpbm_op_type', 'ocApp');
+	add_option('oc2wpbm_oc_server', 'https://REPLACE-THIS-WHITH-YOUR-SERVER.com/owncloud/index.php/apps/bookmarks/public/bookmark');
+	
 	}
+	
+register_activation_hook(__FILE__,'oc2wpbm_plugin_install');
+
 
 /*import the class file for Bookmark Class*/
 require_once( plugin_dir_path( __FILE__ ) . 'bookmark.inc.php' );
