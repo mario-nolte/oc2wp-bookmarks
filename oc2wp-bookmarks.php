@@ -29,6 +29,14 @@ function oc2wpbm_plugin_install ()
 	
 register_activation_hook(__FILE__,'oc2wpbm_plugin_install');
 
+/* deleting passwords for security reasons while deactivating the plugin */
+function oc2wpbm_plugin_deactivate ()
+{
+delete_site_option('oc2wpbm_oc_password');
+delete_site_option('oc2wpbm_sql_password');
+}
+register_deactivation_hook( __FILE__, 'oc2wpbm_plugin_deactivate' );
+
 
 /*import the class file for Bookmark Class*/
 require_once( plugin_dir_path( __FILE__ ) . 'bookmark.inc.php' );
