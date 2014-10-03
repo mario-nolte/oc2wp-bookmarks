@@ -37,6 +37,35 @@ delete_site_option('oc2wpbm_sql_password');
 }
 register_deactivation_hook( __FILE__, 'oc2wpbm_plugin_deactivate' );
 
+/* Delete all settings while uninstalling the plugin */
+function oc2wpbm_plugin_uninstall ()
+{
+	// All Values
+      delete_site_option('oc2wpbm_op_type');
+      delete_site_option('oc2wpbm_oc_server');
+      delete_site_option('oc2wpbm_oc_user');
+      delete_site_option('oc2wpbm_oc_password');
+      delete_site_option('oc2wpbm_sql_server');
+      delete_site_option('oc2wpbm_sql_user');
+      delete_site_option('oc2wpbm_sql_password');
+      delete_site_option('oc2wpbm_sql_database');
+      delete_site_option('oc2wpbm_sql_bmOwner');
+      delete_site_option('oc2wpbm_table_styling');
+      delete_site_option('oc2wpbm_table_number_display');
+      delete_site_option('oc2wpbm_table_number_label');
+      delete_site_option('oc2wpbm_table_title_display');
+      delete_site_option('oc2wpbm_table_title_label');
+      delete_site_option('oc2wpbm_table_description_display');
+      delete_site_option('oc2wpbm_table_description_label');
+      delete_site_option('oc2wpbm_table_tags_display');
+      delete_site_option('oc2wpbm_table_tags_label');
+      delete_site_option('oc2wpbm_table_lastmodified_display');
+      delete_site_option('oc2wpbm_table_lastmodified_label');
+      delete_site_option('oc2wpbm_table_script');
+
+	}
+register_uninstall_hook(__FILE__,'oc2wpbm_plugin_uninstall');
+
 
 /*import the class file for Bookmark Class*/
 require_once( plugin_dir_path( __FILE__ ) . 'bookmark.inc.php' );
