@@ -187,8 +187,10 @@ $tableoutput .= "<tbody>";
       }
     if(get_option('oc2wpbm_table_tags_display')=='1'){
       $tableoutput .= "<td class='column-4'>"; 
-	for($j=0; $j<count($tags); $j++){$tableoutput .= $tags[$j];
-	if ($j+1<count($tags)){$tableoutput .= ", "; }
+	// ensure that the tag 'public' is not displayed and a commata is used as separator
+	for($j=0; $j<count($tags); $j++){
+	if (strtolower($tags[$j])!='public') {$tableoutput .= $tags[$j];
+	if ($j+1<count($tags)){$tableoutput .= ", "; }}
 	}
       $tableoutput .= " </td>";
       }
