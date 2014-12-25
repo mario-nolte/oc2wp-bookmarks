@@ -117,21 +117,19 @@ function getBMfromOC($tags, $order){
 
 echo "<br> Die TAGs sind: " ;
 for($i=0; $i<count($tags);$i++){echo " ". $i . ".tag=" . $tags[$i];};
-$tagsURL="";
-for($i=0; $i<count($tags);$i++){$tagsURL .="&tags[]=" . $tags[$i];};
-echo "<br> tagsURL: " .$tagsURL . "<br>";
-echo "<br> sort:" .$order . "<br>";
+echo "<br> sort:" .$order;
 
-
-$request = wp_remote_get( get_option('oc2wpbm_oc_server') . '/index.php/apps/bookmarks/public/rest/v1/bookmark?user='. get_option('oc2wpbm_oc_user') . '&password='. get_option('oc2wpbm_oc_password') . $tagsURL .'&select[]=description&select[]=lastmodified&select[]=tags');
+$request = wp_remote_get('https://www.momind.eu/owncloud/index.php/apps/bookmarks/public/rest/v1/bookmark?user=bms&password=3456password&tags[]=public');
 $response = wp_remote_retrieve_body( $request );
 
-$result = json_decode($response);
+
+
+$result = json_decode($response['body']);
 
 for ($i=0; $i<count($result); $i++){
 $bookmarks[$i]=new bookmark($result[$i] ->title, $result[$i] ->url, $result[$i] ->description, $result[$i] ->tags, $result[$i] ->lastmodified);
 }
-return $bookmarks;
+return $response;
 }
 
 /* Generates the HTML Code for a table containing bookmark information*/
@@ -145,60 +143,7 @@ $table_tags=get_option('oc2wpbm_table_tags_label');
 $table_lastmodified = get_option('oc2wpbm_table_lastmodified_label');
 $tablescript=stripslashes(get_option('oc2wpbm_table_script'));
 
-$tableoutput ="";
-
-$tableoutput .= "<table " . $tablepre .">";
-$tableoutput .= "<thead> <tr> ";
-if(get_option('oc2wpbm_table_number_display')=='1'){
-  $tableoutput .= "<th class='column-1'> ".$table_number ." </th>"; 
-  }
-if(get_option('oc2wpbm_table_title_display')=='1'){
-  $tableoutput .= "<th class='column-2'>" .$table_title ." </th>";
-  }
-if(get_option('oc2wpbm_table_description_display')=='1'){
-  $tableoutput .= "<th class='column-3'> ".$table_description. " </th>";
-  }
-if(get_option('oc2wpbm_table_tags_display')=='1'){
-  $tableoutput .= "<th class='column-4'> ".$table_tags. " </th>";
-  }
-if(get_option('oc2wpbm_table_lastmodified_display')=='1'){
-  $tableoutput .= "<th class='column-5'> ".$table_lastmodified. " </th>";
-  }
-$tableoutput .= "</tr></thead>";
-$tableoutput .= "<tbody>";
-	  
-  for ($i=0; $i<count($bookmarks); $i++){
-  $tags = $bookmarks[$i] ->tags;
-  
-  $tableoutput .= "<tr>";
-    if(get_option('oc2wpbm_table_number_display')=='1'){
-      $tableoutput .= "<td class='column-1'>" . ($i+1) . "</td>";
-      }
-    if(get_option('oc2wpbm_table_title_display')=='1'){
-      $tableoutput .= "<td class='column-2'> <a href ='" . $bookmarks[$i]->link . "' target='_blank'> ".$bookmarks[$i]->title . "</a> </td>";
-      }
-    if(get_option('oc2wpbm_table_description_display')=='1'){
-      $tableoutput .= "<td class='column-3'>" . $bookmarks[$i]->description . " </td>";
-      }
-    if(get_option('oc2wpbm_table_tags_display')=='1'){
-      $tableoutput .= "<td class='column-4'>"; 
-	// ensure that the tag 'public' is not displayed and a commata is used as separator
-	for($j=0; $j<count($tags); $j++){
-	if (strtolower($tags[$j])!='public') {$tableoutput .= $tags[$j];
-	if ($j+1<count($tags)){$tableoutput .= ", "; }}
-	}
-      $tableoutput .= " </td>";
-      }
-    if(get_option('oc2wpbm_table_lastmodified_display')=='1'){
-      $tableoutput .= "<td class='column-5'>" . date("Y-m-d", $bookmarks[$i]->dateLastModified) . " </td>";
-      }
-  $tableoutput .= "</tr>";
-  }
-
-$tableoutput .= "</tbody>";
-$tableoutput .= "</table>";
-$tableoutput .= $tablescript;
-
+$tableoutput =$bookmarks;
 return $tableoutput;
 }
 

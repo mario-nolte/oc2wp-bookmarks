@@ -123,7 +123,7 @@ echo "<br> tagsURL: " .$tagsURL . "<br>";
 echo "<br> sort:" .$order . "<br>";
 
 
-$request = wp_remote_get( get_option('oc2wpbm_oc_server') . '/index.php/apps/bookmarks/public/rest/v1/bookmark?user='. get_option('oc2wpbm_oc_user') . '&password='. get_option('oc2wpbm_oc_password') . $tagsURL .'&select[]=description&select[]=lastmodified&select[]=tags');
+$request = wp_remote_get( get_option('oc2wpbm_oc_server') . '/index.php/apps/bookmarks/public/rest/v1/bookmark?user='. get_option('oc2wpbm_oc_user') . '&password='. get_option('oc2wpbm_oc_password') . $tagsURL);
 $response = wp_remote_retrieve_body( $request );
 
 $result = json_decode($response);
