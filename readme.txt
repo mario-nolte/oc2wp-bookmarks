@@ -1,9 +1,10 @@
 === Plugin Name ===
 Contributors: Mario Nolte
-Donate link: https://www.momind.eu/
+License: GPLv2 or later
+Donate link: http://www.nolte-netzwerk.de/oc2wp-bookmarks-configuration/#Contribution
 Tags: owncloud, Bookmarks, api, integration, shortcode
 Requires at least: 3.9.2
-Tested up to: 4.0.0
+Tested up to: 4.1.0
 Stable tag: 1.2.8
 
 Use bookmarks that are managed by ownCloud in WordPress posts and pages as table.
@@ -11,65 +12,53 @@ Use bookmarks that are managed by ownCloud in WordPress posts and pages as table
 == Description ==
 This plugin allows you to make use of your ownCloud bookmarks in WordPress posts and pages. You can:
 
-* make use of the ownCloud Bookmarks App (link).
-* access the ownCloud database after configuring it like described here.
+* make use of the ownCloud Bookmarks App (<a href="https://github.com/owncloud/Bookmarks" target="_blank">Link to the newest version</a>).
+* access the ownCloud database after configuring it like described <a href="http://www.nolte-netzwerk.de/oc2wp-bookmarks-configuration/#MySQL mode" target="_blank">in this tutorial section</a>.
 * Use the shortcode [ oc2wpbm] to generate tables that contain ownCloud Bookmarks that ared tagged with 'public'.
 * Use the shortcode [ oc2wpbm tag="example"] to generate tables that contain ownCloud Bookmarks that ared tagged with 'example'.
-* Configure the layout of the table.
+* Use the shortcode [ oc2wpbm tag="example, public"] to generate tables that contain ownCloud Bookmarks that ared tagged with 'example' or 'public'.
+* Use the shortcode [ oc2wpbm tag="example, public" connector="AND"] to generate tables that contain ownCloud Bookmarks that ared tagged with both: 'example' AND 'public'.
+* Configure the <a href ="http://www.nolte-netzwerk.de/oc2wp-bookmarks-configuration/#configure the table layout" target="_blank">layout of the table</a>.
 
-find more here:
-http://www.momind.eu
+find more <a href ="http://www.nolte-netzwerk.de/oc2wp-bookmarks-configuration/" target="_blank">in this tutorial</a>
 
 
 == Installation ==
-
-
+1. Decide for one <a href="http://www.nolte-netzwerk.de/oc2wp-bookmarks-configuration/#Preconditions & Installation">operation mode</a>
+1. If you wish to make use of the ownCloud App operation mode ensure that on your ownCloud server php5-curl is running and that the ownCloud Bookmarks App <a href="http://www.nolte-netzwerk.de/oc2wp-bookmarks-configuration/#Replace the ownCloud Bookmarks App" target="_blank">is supporting the REST API</a>
 1. Download and copy the plugin into the folder `/wp-content/plugins/`
 1. Activate the plugin by making use of the /Plugin area in the WordPress backend.
-1. Configure the operation mode of the plugin (SQL mode or ownCloud mode)
-1. put the shortcode [ oc2wp] into the page or post that should contain a table of bookmarks
+1. go to /Settings/OC2WP Bookmarks and configure the operation mode of the plugin
+1. put the shortcode [ oc2wp] into the page or post that should contain a table of bookmarks that are tagged with 'public'
 
 == Frequently Asked Questions ==
 
+= Are their preconditions that my ownCloud instance has to satisfy? =
+
+The server running your owncloud instance needs to run php5-curl. Furthermore you have to replace the existing ownCloud Bookmarks App (<a href="https://github.com/owncloud/Bookmarks" target="_blank">this new version</a> will be included with ownCloud 8.0) or to provide access to the SQL-Database.
+
 = Which operation mode is appropriate? =
 
-um einige einfach Möglichkeiten aufzuzeigen, wie Plugins eingebunden werden.
+In general it is recommended to use the ownCloud App mode. The MySQL mode only is for those that whish to access the Bookmarks of all users of an ownCloud instance or those that cannot change the ownCloud Bookmarks App.
 
 = How to configure the OC mode =
 
-Erfahre mehr unter  codex.wordpress.org oder in Deutschsprachigen Wordpress Community Forum wpde.org
+Enter the credentials of the ownCloud account that owns the Bookmarks that should be published. 
 
 = What are the next steps for this plugin =
-Currently I am working to add a widget for sidebars to this plugin so that ownCloud bookmarks also can be used within the widget areas.
+Currently I am working to enhance the sorting capabilites. After this my plan is to add a widget for sidebars so that ownCloud bookmarks also can be used within the widget areas.
 Further suggestions are welcome!
 
 = language =
-This plugin is currently only available in English.
+This plugin is currently only available in English but you can set the title of the generated tables to your own needs in your own language.
 
 
 == Screenshots ==
-
+1. oc2wp Settings
+2. ownCloud Plugin
+3. Resulting Table enhanded by TablePress
 
 == Changelog ==
-= 1.2.5 =
-* Erweiterung mit Admin Texteingabe, welche bei den Ausgaben Sidebarwidget, Shortcode anzeigt wird.
-
-= 1.1 =
-* erneuerung des sidebar Widget Funktion für WP 3.5.1
-
-= 1.0.1 =
-* weitere FAQ und englishsprachiger Hinweise
-
-= 1.0 =
-* erste Version mit
-* Shortcode
-* Sidebar Widget
-* Dashboard Menü und Seite
-
-== Upgrade Notice ==
-= 1.1 =
-Sidebarwidget funktion aktualisiert
-= 1.0.1 =
-in diesem Update wurde nur der Infotext angepasst, und FAQ erweitert.
-
+= 1.0.0 =
+* Very first version enabling to connect via SQL or the ownCloud Plugin REST API to the ownCloud instance using the tags.
 

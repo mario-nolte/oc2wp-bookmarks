@@ -62,13 +62,12 @@ function oc2wpbm_configuration_page(){
     <ol>
     <li>Chose the operation mode:
     <ol>
-      <li> OC App mode is recommended and for those that have the ### App running on their owncloud.</li>
+      <li> OC App mode is recommended and for those that have the <a href="https://github.com/owncloud/Bookmarks" target="_blank"> ownCoud Bookmark App supporting REST </a> running on their owncloud.</li>
       <li> MySQL mode is for those who have access to the MySQL Database of their ownCloud instance and that wish to make use of bookmarks of several users.</li>
     </li></ol>
-    <li>Enter the data to connect to the ### ownCloud App or to the MySQL Database. </li>
-    <li>Add the shortcode <strong>[oc2wpbm]</strong> to a post or page that should contain a table with those bookmarks that have the tag 'public'.</li>
-    <li>Add the shortcode <strong>[oc2wpbm tag="example"]</strong> to a post or page that should contain a table with those bookmarks that have the tag 'example'.</li>
-    <li>Configure the design of the table e. g. like explained in this tutorial.</li>
+    <li>Enter the data to connect to the ownCloud Bookmarks App or to the MySQL Database. </li>
+    <li>Add the shortcode <strong>[oc2wpbm]</strong> to a post or page that should contain a table with those bookmarks that have the tag 'public' or add the shortcode <strong>[oc2wpbm tags="public, example"]</strong> to display Bookmarks that have one of those tags. Bookmarks that have both tags can be selected via <strong>[oc2wpbmtags=”public, example” connector=”AND”]</strong>
+    <li>Configure the design of the table e. g. like explained <a href="http://www.nolte-netzwerk.de/oc2wp-bookmarks-configuration/#configure the table layout" target="_blank"> in this tutorial </a>.</li>
     </ol>
     </p>
   <br>
@@ -313,7 +312,7 @@ function oc2wpbm_configuration_page(){
 
   <p class="submit"><input type="submit" name="inf_update" id="submit" class="button" value="<?php _e('Update options'); ?> &raquo;"></p>
    </form>
-   Please visit <a href="http://www.momind.eu">the documentation</a> to read more about the use and configuration of this plugin.<br/>
+   Please visit<a href="http://www.nolte-netzwerk.de/oc2wp-bookmarks-configuration/" target="_blank"> the documentation </a> to read more about the use and configuration of this plugin.<br/>
 
 
 <?php
