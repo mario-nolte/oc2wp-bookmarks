@@ -94,10 +94,10 @@ function getBMfromSQL($tags, $order){
   
   $OCdb = new wpdb($sql_user, $sql_password, $oc_database, $sql_server); 
   /* Sanitise the query to avoid code & SQL injection. COLLATE UTF8_GENERAL_CI is used so that tags are used caseinsensitive*/
-  $query=$OCdb->prepare("select b.url, b.title, b.description, GROUP_CONCAT(t.tag SEPARATOR ', ') as tags, b.lastmodified from oc_bookmarks b LEFT JOIN oc_bookmarks_tags t on b.id=t.bookmark_id WHERE t.tag COLLATE UTF8_GENERAL_CI IN (%s) AND b.user_id LIKE %s group by id ORDER BY b.lastmodified ASC", $bm_term, $bm_user);
+  $query=$OCdb->prepare("select b.url, b.title, b.description, GROUP_CONCAT(t.tag SEPARATOR ', ') as tags, b.lastmodified from oc2wpBM b LEFT JOIN oc2wpBMT t on b.id=t.bookmark_id WHERE t.tag COLLATE UTF8_GENERAL_CI IN (%s) AND b.user_id LIKE %s group by id ORDER BY b.lastmodified ASC", $bm_term, $bm_user);
   if (strcasecmp($order,'desc')==0){
   /* Due to the prepare() function sorting cannot be handeld as variable */
-  $query=$OCdb->prepare("select b.url, b.title, b.description, GROUP_CONCAT(t.tag SEPARATOR ', ') as tags, b.lastmodified from oc_bookmarks b LEFT JOIN oc_bookmarks_tags t on b.id=t.bookmark_id WHERE t.tag COLLATE UTF8_GENERAL_CI IN (%s) AND b.user_id LIKE %s group by id ORDER BY b.lastmodified DESC", $bm_term, $bm_user);
+  $query=$OCdb->prepare("select b.url, b.title, b.description, GROUP_CONCAT(t.tag SEPARATOR ', ') as tags, b.lastmodified from oc2wpBM b LEFT JOIN oc2wpBMT t on b.id=t.bookmark_id WHERE t.tag COLLATE UTF8_GENERAL_CI IN (%s) AND b.user_id LIKE %s group by id ORDER BY b.lastmodified DESC", $bm_term, $bm_user);
   }
   $query=stripslashes($query);
   $res = $OCdb->get_results($query);
