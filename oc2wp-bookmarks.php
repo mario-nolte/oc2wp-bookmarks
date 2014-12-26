@@ -1,12 +1,12 @@
 <?php
 /* 
 Plugin Name: OC2WP Bookmarks
-Version: 0.0.5
-Plugin URI: http://momind.eu/
+Version: 1.0.0
+Plugin URI: http://www.nolte-netzwerk.de/oc2wp-bookmarks-configuration/
 Description: Use bookmarks that are managed by ownCloud in WordPress posts and pages as table
 Author: Mario Nolte
-Author URI: http://www.momind.eu
-Licenc:  GPLv2
+Author URI: http://www.nolte-netzwerk.de/
+Licence:  GPLv2
 */ 
 
 /* set some default options */
@@ -113,15 +113,10 @@ function getBMfromSQL($tags, $order){
 
 /* get bookmarks in accordance to the defined tag out of ownCloud via the Bookmarks App*/
 function getBMfromOC($tags, $order){
-//setting sorting options
 
-echo "<br> Die TAGs sind: " ;
-for($i=0; $i<count($tags);$i++){echo " ". $i . ".tag=" . $tags[$i];};
+// setting the tags
 $tagsURL="";
 for($i=0; $i<count($tags);$i++){$tagsURL .="&tags[]=" . $tags[$i];};
-echo "<br> tagsURL: " .$tagsURL . "<br>";
-echo "<br> sort:" .$order . "<br>";
-
 
 $request = wp_remote_get( get_option('oc2wpbm_oc_server') . '/index.php/apps/bookmarks/public/rest/v1/bookmark?user='. get_option('oc2wpbm_oc_user') . '&password='. get_option('oc2wpbm_oc_password') . $tagsURL .'&select[]=description&select[]=lastmodified&select[]=tags');
 $response = wp_remote_retrieve_body( $request );
