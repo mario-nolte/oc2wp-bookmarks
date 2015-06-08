@@ -1,13 +1,13 @@
 === Plugin Name ===
-Contributors: Mario Nolte
+Contributors: hikingnerd
 License: GPLv2 or later
 Donate link: http://www.nolte-netzwerk.de/oc2wp-bookmarks-configuration/#Contribution
 Tags: owncloud, Bookmarks, api, integration, shortcode
 Requires at least: 3.9.2
 Tested up to: 4.1.0
-Stable tag: 1.2.8
+Stable tag: 1.0.0
 
-Use bookmarks that are managed by ownCloud in WordPress posts and pages as table.
+Embed your Bookmarks that are managed by ownCloud in your WordPress posts and pages as table.
 
 == Description ==
 This plugin allows you to make use of your ownCloud bookmarks in WordPress posts and pages. You can:
@@ -33,24 +33,29 @@ find more <a href ="http://www.nolte-netzwerk.de/oc2wp-bookmarks-configuration/"
 
 == Frequently Asked Questions ==
 
-= Are their preconditions that my ownCloud instance has to satisfy? =
+= Are there preconditions that my ownCloud instance has to satisfy? =
 
 The server running your owncloud instance needs to run php5-curl. Furthermore you have to replace the existing ownCloud Bookmarks App (<a href="https://github.com/owncloud/Bookmarks" target="_blank">this new version</a> will be included with ownCloud 8.0) or to provide access to the SQL-Database.
 
 = Which operation mode is appropriate? =
 
-In general it is recommended to use the ownCloud App mode. The MySQL mode only is for those that whish to access the Bookmarks of all users of an ownCloud instance or those that cannot change the ownCloud Bookmarks App.
+In general it is recommended to use the ownCloud App mode. The MySQL mode only is for those appropriate who whish to access the Bookmarks of all users of an ownCloud instance or those that cannot change the ownCloud Bookmarks App.
 
 = How to configure the OC mode =
 
 Enter the credentials of the ownCloud account that owns the Bookmarks that should be published. 
 
+= Language =
+This plugin is currently only available in English but you can set the title of the generated tables to your own needs in your own language.
+
+= What are the shortcodes to embed a table containing the ownCloud Bookmarks into posts or pages? =
+* embed those Bookmarks that are tagged with 'public': [ oc2wpbm]
+* embed those Bookmarks that contain one out of a set of tags (in this case 'public' or 'example'): [ oc2wpbm tags=”public, example”] 
+* embed those Bookmarks that contain a specific set of Bookmars (in this case 'public' AND 'example'): [ oc2wpbm tags=”public, example” connector=”AND”] 
+
 = What are the next steps for this plugin =
 Currently I am working to enhance the sorting capabilites. After this my plan is to add a widget for sidebars so that ownCloud bookmarks also can be used within the widget areas.
 Further suggestions are welcome!
-
-= language =
-This plugin is currently only available in English but you can set the title of the generated tables to your own needs in your own language.
 
 
 == Screenshots ==

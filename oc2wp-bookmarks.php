@@ -250,7 +250,7 @@ add_shortcode('oc2wpbm', 'oc2wpbm_shortcode');
 /* hook configuration page into the setting area of the wordpress backend*/
 function oc2wpbm_plugin_menu()
 {
-add_options_page('owncCloud 2 WordPress Bookmarks', 'OC2WP Bookmarks', 'manage_options', __FILE__, 'oc2wpbm_configuration_page');
+add_options_page('ownCloud 2 WordPress Bookmarks', 'OC2WP Bookmarks', 'manage_options', __FILE__, 'oc2wpbm_configuration_page');
 }
 
 add_action('admin_menu', 'oc2wpbm_plugin_menu');
